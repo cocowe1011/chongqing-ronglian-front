@@ -3,7 +3,7 @@ import axios from 'axios';
 // 菜鸟专用HTTP工具，用于调用大包查询接口
 const HttpUtilCainiao = axios.create({
   baseURL: process.env.VUE_APP_CAINIAO_BASE_URL,
-  timeout: 3000
+  timeout: 500
 });
 
 // 响应拦截器

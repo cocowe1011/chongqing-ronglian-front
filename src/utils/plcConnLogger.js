@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const LOG_DIR = 'D://weihai-cainiao-front/plc-conn-log';
+const LOG_DIR = 'D://chongqing-ronglian-front/plc-conn-log';
 const BUFFER_SIZE = 20;
 const FLUSH_INTERVAL = 5000;
 // PLC DBW0 翻转常在 3~4s，3s 易误报；放宽到 8s

@@ -1,5 +1,5 @@
 {
-  "name": "weihai-cainiao-front",
+  "name": "chongqing-ronglian-front",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -23,7 +23,6 @@
     "element-plus": "^2.7.8",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "mqtt": "^5.15.2",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "nodes7": "^0.3.18",
     "path-browserify": "^1.0.1",

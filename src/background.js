@@ -27,69 +27,14 @@ logger.transports.file.file = app.getPath('userData') + '/app.log';
 const { spawn } = require('child_process');
 const path = require('path');
 const fs = require('fs');
-const mqtt = require('mqtt');
 const plcConnLogger = require('./utils/plcConnLogger');
 var appTray = null;
 let closeStatus = false;
 var conn = new nodes7();
 
-// 数字孪生 MQTT（WCS 推前置仓）
-const TWIN_MQTT_URL = 'ws://mcs.sdland-sea.com:80/whwlws/mqtt';
-const TWIN_MQTT_TOPIC = '/wly/wcs/1';
-const TWIN_MQTT_USERNAME = 'wlywcs';
-const TWIN_MQTT_PASSWORD = 'wcs!@#abc';
-let twinMqttClient = null;
-let twinMqttReady = false;
-
-function initTwinMqtt() {
-  if (twinMqttClient) return;
-  const clientId = `wlywcs_twin_${process.pid}_${Date.now()}`;
-  twinMqttClient = mqtt.connect(TWIN_MQTT_URL, {
-    username: TWIN_MQTT_USERNAME,
-    password: TWIN_MQTT_PASSWORD,
-    protocolVersion: 5,
-    keepalive: 60,
-    connectTimeout: 10000,
-    reconnectPeriod: 5000,
-    clientId
-  });
-  twinMqttClient.on('connect', () => {
-    twinMqttReady = true;
-    logger.info(`数字孪生 MQTT 已连接 clientId=${clientId}`);
-  });
-  twinMqttClient.on('reconnect', () => {
-    twinMqttReady = false;
-    logger.info('数字孪生 MQTT 重连中...');
-  });
-  twinMqttClient.on('close', () => {
-    twinMqttReady = false;
-  });
-  twinMqttClient.on('error', (err) => {
-    twinMqttReady = false;
-    logger.error(
-      '数字孪生 MQTT 错误: ' + (err && err.message ? err.message : err)
-    );
-  });
-}
-
-function publishTwinMqtt(payload) {
-  if (!twinMqttClient || !twinMqttReady) {
-    return;
-  }
-  try {
-    const body =
-      typeof payload === 'string' ? payload : JSON.stringify(payload);
-    twinMqttClient.publish(TWIN_MQTT_TOPIC, body, { qos: 0 });
-  } catch (err) {
-    logger.error(
-      '数字孪生 MQTT 发布失败: ' + (err && err.message ? err.message : err)
-    );
-  }
-}
-
-// 读取缩放配置文件（D://weihai-cainiao-front/config/zoom.json，升级不覆盖）
+// 读取缩放配置文件（D://chongqing-ronglian-front/config/zoom.json，升级不覆盖）
 function readZoomConfig() {
-  const configDir = 'D://weihai-cainiao-front/config';
+  const configDir = 'D://chongqing-ronglian-front/config';
   const configPath = path.join(configDir, 'zoom.json');
   try {
     if (fs.existsSync(configPath)) {
@@ -122,7 +67,7 @@ function readZoomConfig() {
 function logToFile(message) {
   const timestamp = new Date().toLocaleString();
   const logPath =
-    'D://weihai-cainiao-front/log/' +
+    'D://chongqing-ronglian-front/log/' +
     new Date().toLocaleDateString().replaceAll('/', '-') +
     'runlog.txt';
   fs.appendFile(logPath, `[${timestamp}] ${message}\n`, (err) => {
@@ -161,11 +106,11 @@ function flushLogBuffer() {
   if (logBuffer.length === 0) return;
 
   const logPath =
-    'D://weihai-cainiao-front/log/' +
+    'D://chongqing-ronglian-front/log/' +
     (new Date().toLocaleDateString() + '.txt').replaceAll('/', '-');
 
   // 确保日志目录存在
-  const logDir = 'D://weihai-cainiao-front/log';
+  const logDir = 'D://chongqing-ronglian-front/log';
   if (!fs.existsSync(logDir)) {
     fs.mkdirSync(logDir, { recursive: true });
   }
@@ -220,15 +165,6 @@ app.on('window-all-closed', () => {
 app.on('before-quit', () => {
   flushLogBuffer();
   plcConnLogger.flush();
-  if (twinMqttClient) {
-    try {
-      twinMqttClient.end(true);
-    } catch (e) {
-      // ignore
-    }
-    twinMqttClient = null;
-    twinMqttReady = false;
-  }
 });
 
 // 单实例锁，防止应用被多开 - 必须在app.ready之前检查
@@ -254,7 +190,6 @@ global.sharedObject = {
 };
 let mainWindow = null;
 app.on('ready', () => {
-  initTwinMqtt();
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 1100,
@@ -330,10 +265,6 @@ app.on('ready', () => {
   // cancelWriteToPLC - 取消PLC某个变量的写入
   ipcMain.on('cancelWriteToPLC', (event, arg1) => {
     cancelWriteToPLC(arg1);
-  });
-  // 数字孪生 MQTT 发布（由 MainPage 每秒组包后发送）
-  ipcMain.on('publishTwinMqtt', (event, payload) => {
-    publishTwinMqtt(payload);
   });
   // 获取PLC变量定义（只在组件挂载时调用一次，因为启动后不会变）
   ipcMain.handle('getPlcVariables', () => {
@@ -439,7 +370,7 @@ app.on('ready', () => {
       const jarPath = path.join(
         __static,
         './jarlib',
-        'weigao-cainiao-record-middle.jar'
+        'chongqing-ronglian-record-middle.jar'
       );
 
       // 优化的Java启动参数 - 针对启动速度优化
@@ -454,7 +385,7 @@ app.on('ready', () => {
         '-XX:+UseG1GC', // 使用G1垃圾收集器
         '-XX:MaxGCPauseMillis=200', // 最大GC停顿时间
         '-XX:+HeapDumpOnOutOfMemoryError', // 内存溢出时导出堆转储
-        '-XX:HeapDumpPath=D://weihai-cainiao-front/dump', // 堆转储文件路径
+        '-XX:HeapDumpPath=D://chongqing-ronglian-front/dump', // 堆转储文件路径
 
         // 启动速度优化 - 减少JIT编译开销
         '-XX:+TieredCompilation', // 分层编译
@@ -466,7 +397,7 @@ app.on('ready', () => {
 
         // 错误处理
         '-XX:+ExitOnOutOfMemoryError', // 发生OOM时退出
-        '-XX:ErrorFile=D://weihai-cainiao-front/log/hs_err_%p.log', // JVM错误日志
+        '-XX:ErrorFile=D://chongqing-ronglian-front/log/hs_err_%p.log', // JVM错误日志
         // 编码
         '-Dfile.encoding=UTF-8',
         // 应用参数
@@ -474,8 +405,8 @@ app.on('ready', () => {
         jarPath
       ];
       // 确保日志目录存在
-      const logDir = 'D://weihai-cainiao-front/log';
-      const dumpDir = 'D://weihai-cainiao-front/dump';
+      const logDir = 'D://chongqing-ronglian-front/log';
+      const dumpDir = 'D://chongqing-ronglian-front/dump';
       if (!fs.existsSync(logDir)) {
         fs.mkdirSync(logDir, { recursive: true });
       }

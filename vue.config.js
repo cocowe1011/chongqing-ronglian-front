@@ -36,11 +36,9 @@ module.exports = defineConfig({
   pluginOptions: {
     electronBuilder: {
       nodeIntegration: true,
-      // mqtt@5 含可选链等现代语法，主进程 webpack 无法解析；外置后由 Node 直接 require
-      externals: ['mqtt'],
       builderOptions: {
-        productName: 'weihai-cainiao-front', //生成exe的名字
-        appId: 'weihai-cainiao-front', //包名
+        productName: 'chongqing-ronglian-front', //生成exe的名字
+        appId: 'chongqing-ronglian-front', //包名
         copyright: 'wl', //版权信息,
         nsis: {
           oneClick: false, // 是否一键安装

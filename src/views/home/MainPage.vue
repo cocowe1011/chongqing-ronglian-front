@@ -90,7 +90,7 @@
               <el-icon><Delete /></el-icon><span>全线清空</span>
             </button>
             <button
-              class="btn-disable-cainiao"
+              class="btn-disable"
               @click="toggleDisableCainiao"
               :class="{ pressed: disableCainiao }"
             >
@@ -1988,8 +1988,6 @@ export default {
       },
       // AGV/MCS轮询定时器
       mcsPollingTimer: null,
-      // 数字孪生 MQTT 推送定时器
-      twinMqttTimer: null,
       // 数据准备就绪标志位
       isDataReady: false
     };
@@ -2291,7 +2289,6 @@ export default {
     setTimeout(() => {
       this.addLog('isDataReady数据加载完成');
       this.isDataReady = true;
-      this.startTwinMqttPublish();
     }, 3000);
   },
   methods: {
@@ -2371,54 +2368,6 @@ export default {
         .catch((err) => {
           console.log('biz config load error!', err);
         });
-    },
-    buildTwinPayload() {
-      const motors = [];
-      for (let motorId = 1; motorId <= 32; motorId++) {
-        let runningSignal = 0;
-        if (motorId <= 16) {
-          runningSignal =
-            this.motorRunningWord6[`bit${motorId - 1}`] === '1' ? 1 : 0;
-        } else {
-          runningSignal =
-            this.motorRunningWord8[`bit${motorId - 17}`] === '1' ? 1 : 0;
-        }
-        motors.push({
-          motor_id: motorId,
-          running_signal: runningSignal,
-          large_bag_no: null
-        });
-      }
-      const sortingChutes = [];
-      for (let chuteId = 1; chuteId <= 12; chuteId++) {
-        sortingChutes.push({
-          chute_id: chuteId,
-          package_count: Number(this.sortPortPlcCounts[chuteId] ?? 0) || 0,
-          large_bag_no: ''
-        });
-      }
-      return {
-        timestamp: moment().format('YYYY-MM-DDTHH:mm:ss+08:00'),
-        motors,
-        sorting_chutes: sortingChutes
-      };
-    },
-    startTwinMqttPublish() {
-      this.stopTwinMqttPublish();
-      this.twinMqttTimer = setInterval(() => {
-        try {
-          ipcRenderer.send('publishTwinMqtt', this.buildTwinPayload());
-        } catch (e) {
-          console.error('数字孪生 MQTT 推送失败:', e);
-        }
-      }, 1000);
-      this.addLog('数字孪生 MQTT 推送已启动(1s)', 'running');
-    },
-    stopTwinMqttPublish() {
-      if (this.twinMqttTimer) {
-        clearInterval(this.twinMqttTimer);
-        this.twinMqttTimer = null;
-      }
     },
     // 获取队列托盘数量
     getQueueTrayCount(queueId) {
@@ -4135,8 +4084,6 @@ export default {
     this.stopMcsPolling();
     // 清除上货队列超时清理轮询
     this.stopUploadQueueCleaner();
-    // 停止数字孪生 MQTT 推送
-    this.stopTwinMqttPublish();
     // 断开六面扫Socket连接
     this.disconnectSixScan();
     // 清除上货触发模拟测试定时器
@@ -4576,10 +4523,10 @@ export default {
           button.btn-reset.pressed:hover {
             background: linear-gradient(135deg, #ffc53d, #fa8c16);
           }
-          button.btn-disable-cainiao.pressed {
+          button.btn-disable.pressed {
             background: linear-gradient(135deg, #8c8c8c, #595959);
           }
-          button.btn-disable-cainiao.pressed:hover {
+          button.btn-disable.pressed:hover {
             background: linear-gradient(135deg, #a6a6a6, #737373);
           }
         }

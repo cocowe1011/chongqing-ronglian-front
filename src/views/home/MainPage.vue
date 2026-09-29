@@ -200,27 +200,307 @@
                     <span class="queue-marker-name">{{ marker.name }}</span>
                   </div>
                 </div>
-                <!-- DBW12 光电信号--1 -->
-                <!-- 01001 -->
+                <!-- DBW6 对接输入信号 -->
+                <!-- 10001光电 -->
                 <div
-                  class="marker label-right"
+                  class="marker"
                   :class="{ scanning: photoelectricSignal.bit0 === '1' }"
-                  data-x="600"
-                  data-y="190"
+                  data-x="640"
+                  data-y="1380"
                   @click="toggleBitValue(photoelectricSignal, 'bit0')"
                 >
-                  <div class="marker-label">光电</div>
+                  <div class="marker-label">10001光电</div>
                 </div>
-                <!-- DBW6 电机运行信号 01001-01016 -->
-                <!-- 01001 -->
+                <!-- 10002光电 -->
                 <div
-                  class="motor-marker marker-show-label label-top"
+                  class="marker"
+                  :class="{ scanning: photoelectricSignal.bit1 === '1' }"
+                  data-x="640"
+                  data-y="1380"
+                  @click="toggleBitValue(photoelectricSignal, 'bit1')"
+                >
+                  <div class="marker-label">10002光电</div>
+                </div>
+                <!-- 10003光电 -->
+                <div
+                  class="marker"
+                  :class="{ scanning: photoelectricSignal.bit2 === '1' }"
+                  data-x="640"
+                  data-y="1380"
+                  @click="toggleBitValue(photoelectricSignal, 'bit2')"
+                >
+                  <div class="marker-label">10003光电</div>
+                </div>
+                <!-- 10004光电 -->
+                <div
+                  class="marker"
+                  :class="{ scanning: photoelectricSignal.bit3 === '1' }"
+                  data-x="640"
+                  data-y="1380"
+                  @click="toggleBitValue(photoelectricSignal, 'bit3')"
+                >
+                  <div class="marker-label">10004光电</div>
+                </div>
+                <!-- 10006升到位 -->
+                <div
+                  class="marker"
+                  :class="{ scanning: photoelectricSignal.bit4 === '1' }"
+                  data-x="640"
+                  data-y="1380"
+                  @click="toggleBitValue(photoelectricSignal, 'bit4')"
+                >
+                  <div class="marker-label">10006升到位</div>
+                </div>
+                <!-- 10006降到位 -->
+                <div
+                  class="marker"
+                  :class="{ scanning: photoelectricSignal.bit5 === '1' }"
+                  data-x="640"
+                  data-y="1380"
+                  @click="toggleBitValue(photoelectricSignal, 'bit5')"
+                >
+                  <div class="marker-label">10006降到位</div>
+                </div>
+                <!-- 10007光电 -->
+                <div
+                  class="marker"
+                  :class="{ scanning: photoelectricSignal.bit6 === '1' }"
+                  data-x="640"
+                  data-y="1380"
+                  @click="toggleBitValue(photoelectricSignal, 'bit6')"
+                >
+                  <div class="marker-label">10007光电</div>
+                </div>
+                <!-- 10008光电 -->
+                <div
+                  class="marker"
+                  :class="{ scanning: photoelectricSignal.bit7 === '1' }"
+                  data-x="640"
+                  data-y="1380"
+                  @click="toggleBitValue(photoelectricSignal, 'bit7')"
+                >
+                  <div class="marker-label">10008光电</div>
+                </div>
+                <!-- 10009光电 -->
+                <div
+                  class="marker"
+                  :class="{ scanning: photoelectricSignal.bit8 === '1' }"
+                  data-x="640"
+                  data-y="1380"
+                  @click="toggleBitValue(photoelectricSignal, 'bit8')"
+                >
+                  <div class="marker-label">10009光电</div>
+                </div>
+                <!-- 10010光电 -->
+                <div
+                  class="marker"
+                  :class="{ scanning: photoelectricSignal.bit9 === '1' }"
+                  data-x="640"
+                  data-y="1380"
+                  @click="toggleBitValue(photoelectricSignal, 'bit9')"
+                >
+                  <div class="marker-label">10010光电</div>
+                </div>
+                <!-- 10012上升到位 -->
+                <div
+                  class="marker"
+                  :class="{ scanning: photoelectricSignal.bit10 === '1' }"
+                  data-x="640"
+                  data-y="1380"
+                  @click="toggleBitValue(photoelectricSignal, 'bit10')"
+                >
+                  <div class="marker-label">10012上升到位</div>
+                </div>
+                <!-- 10012下降到位 -->
+                <div
+                  class="marker"
+                  :class="{ scanning: photoelectricSignal.bit11 === '1' }"
+                  data-x="640"
+                  data-y="1380"
+                  @click="toggleBitValue(photoelectricSignal, 'bit11')"
+                >
+                  <div class="marker-label">10012下降到位</div>
+                </div>
+                <!-- 10013光电 -->
+                <div
+                  class="marker"
+                  :class="{ scanning: photoelectricSignal.bit12 === '1' }"
+                  data-x="640"
+                  data-y="1380"
+                  @click="toggleBitValue(photoelectricSignal, 'bit12')"
+                >
+                  <div class="marker-label">10013光电</div>
+                </div>
+                <!-- 10014光电 -->
+                <div
+                  class="marker"
+                  :class="{ scanning: photoelectricSignal.bit13 === '1' }"
+                  data-x="640"
+                  data-y="1380"
+                  @click="toggleBitValue(photoelectricSignal, 'bit13')"
+                >
+                  <div class="marker-label">10014光电</div>
+                </div>
+                <!-- 10015光电 -->
+                <div
+                  class="marker"
+                  :class="{ scanning: photoelectricSignal.bit14 === '1' }"
+                  data-x="640"
+                  data-y="1380"
+                  @click="toggleBitValue(photoelectricSignal, 'bit14')"
+                >
+                  <div class="marker-label">10015光电</div>
+                </div>
+                <!-- DBW8 电机运行信号 10001-10015（bit15 备用不生成） -->
+                <!-- 10001电机运行信号 -->
+                <div
+                  class="motor-marker marker-show-label"
                   :class="{ running: motorRunning.bit0 === '1' }"
-                  data-x="400"
-                  data-y="245"
+                  data-x="1080"
+                  data-y="1390"
                   @click="toggleBitValue(motorRunning, 'bit0')"
                 >
-                  <div class="marker-label">电机</div>
+                  <div class="marker-label">10001电机</div>
+                </div>
+                <!-- 10002电机运行信号 -->
+                <div
+                  class="motor-marker marker-show-label"
+                  :class="{ running: motorRunning.bit1 === '1' }"
+                  data-x="1080"
+                  data-y="1390"
+                  @click="toggleBitValue(motorRunning, 'bit1')"
+                >
+                  <div class="marker-label">10002电机</div>
+                </div>
+                <!-- 10003电机运行信号 -->
+                <div
+                  class="motor-marker marker-show-label"
+                  :class="{ running: motorRunning.bit2 === '1' }"
+                  data-x="1080"
+                  data-y="1390"
+                  @click="toggleBitValue(motorRunning, 'bit2')"
+                >
+                  <div class="marker-label">10003电机</div>
+                </div>
+                <!-- 10004电机运行信号 -->
+                <div
+                  class="motor-marker marker-show-label"
+                  :class="{ running: motorRunning.bit3 === '1' }"
+                  data-x="1080"
+                  data-y="1390"
+                  @click="toggleBitValue(motorRunning, 'bit3')"
+                >
+                  <div class="marker-label">10004电机</div>
+                </div>
+                <!-- 10005电机运行信号 -->
+                <div
+                  class="motor-marker marker-show-label"
+                  :class="{ running: motorRunning.bit4 === '1' }"
+                  data-x="1080"
+                  data-y="1390"
+                  @click="toggleBitValue(motorRunning, 'bit4')"
+                >
+                  <div class="marker-label">10005电机</div>
+                </div>
+                <!-- 10006电机运行信号 -->
+                <div
+                  class="motor-marker marker-show-label"
+                  :class="{ running: motorRunning.bit5 === '1' }"
+                  data-x="1080"
+                  data-y="1390"
+                  @click="toggleBitValue(motorRunning, 'bit5')"
+                >
+                  <div class="marker-label">10006电机</div>
+                </div>
+                <!-- 10007电机运行信号 -->
+                <div
+                  class="motor-marker marker-show-label"
+                  :class="{ running: motorRunning.bit6 === '1' }"
+                  data-x="1080"
+                  data-y="1390"
+                  @click="toggleBitValue(motorRunning, 'bit6')"
+                >
+                  <div class="marker-label">10007电机</div>
+                </div>
+                <!-- 10008电机运行信号 -->
+                <div
+                  class="motor-marker marker-show-label"
+                  :class="{ running: motorRunning.bit7 === '1' }"
+                  data-x="1080"
+                  data-y="1390"
+                  @click="toggleBitValue(motorRunning, 'bit7')"
+                >
+                  <div class="marker-label">10008电机</div>
+                </div>
+                <!-- 10009电机运行信号 -->
+                <div
+                  class="motor-marker marker-show-label"
+                  :class="{ running: motorRunning.bit8 === '1' }"
+                  data-x="1080"
+                  data-y="1390"
+                  @click="toggleBitValue(motorRunning, 'bit8')"
+                >
+                  <div class="marker-label">10009电机</div>
+                </div>
+                <!-- 10010电机运行信号 -->
+                <div
+                  class="motor-marker marker-show-label"
+                  :class="{ running: motorRunning.bit9 === '1' }"
+                  data-x="1080"
+                  data-y="1390"
+                  @click="toggleBitValue(motorRunning, 'bit9')"
+                >
+                  <div class="marker-label">10010电机</div>
+                </div>
+                <!-- 10011电机运行信号 -->
+                <div
+                  class="motor-marker marker-show-label"
+                  :class="{ running: motorRunning.bit10 === '1' }"
+                  data-x="1080"
+                  data-y="1390"
+                  @click="toggleBitValue(motorRunning, 'bit10')"
+                >
+                  <div class="marker-label">10011电机</div>
+                </div>
+                <!-- 10012电机运行信号 -->
+                <div
+                  class="motor-marker marker-show-label"
+                  :class="{ running: motorRunning.bit11 === '1' }"
+                  data-x="1080"
+                  data-y="1390"
+                  @click="toggleBitValue(motorRunning, 'bit11')"
+                >
+                  <div class="marker-label">10012电机</div>
+                </div>
+                <!-- 10013电机运行信号 -->
+                <div
+                  class="motor-marker marker-show-label"
+                  :class="{ running: motorRunning.bit12 === '1' }"
+                  data-x="1080"
+                  data-y="1390"
+                  @click="toggleBitValue(motorRunning, 'bit12')"
+                >
+                  <div class="marker-label">10013电机</div>
+                </div>
+                <!-- 10014电机运行信号 -->
+                <div
+                  class="motor-marker marker-show-label"
+                  :class="{ running: motorRunning.bit13 === '1' }"
+                  data-x="1080"
+                  data-y="1390"
+                  @click="toggleBitValue(motorRunning, 'bit13')"
+                >
+                  <div class="marker-label">10014电机</div>
+                </div>
+                <!-- 10015电机运行信号 -->
+                <div
+                  class="motor-marker marker-show-label"
+                  :class="{ running: motorRunning.bit14 === '1' }"
+                  data-x="1080"
+                  data-y="1390"
+                  @click="toggleBitValue(motorRunning, 'bit14')"
+                >
+                  <div class="marker-label">10015电机</div>
                 </div>
                 <!-- 输送线流动箭头 -->
                 <div
@@ -509,14 +789,75 @@ export default {
         }
       ],
       logId: 1000, // 添加一个日志ID计数器
-      // DBW12 光电信号--1
+      // DBW0 输送线看门狗心跳
+      conveyorHeartbeat: 0,
+      // DBW2 输送线当前运行状态
+      conveyorRunStatus: 0,
+      // DBW4 区域报警 BIT 0~7
+      areaAlarm: {
+        bit0: '0',
+        bit1: '0',
+        bit2: '0',
+        bit3: '0',
+        bit4: '0',
+        bit5: '0',
+        bit6: '0',
+        bit7: '0'
+      },
+      // DBW6 对接输入信号 BIT 0~15
       photoelectricSignal: {
-        bit0: '0'
+        bit0: '0',
+        bit1: '0',
+        bit2: '0',
+        bit3: '0',
+        bit4: '0',
+        bit5: '0',
+        bit6: '0',
+        bit7: '0',
+        bit8: '0',
+        bit9: '0',
+        bit10: '0',
+        bit11: '0',
+        bit12: '0',
+        bit13: '0',
+        bit14: '0',
+        bit15: '0'
       },
-      // DBW6 电机运行信号 01001-01016
+      // DBW8 电机运行信号 BIT 0~15
       motorRunning: {
-        bit0: '0'
+        bit0: '0',
+        bit1: '0',
+        bit2: '0',
+        bit3: '0',
+        bit4: '0',
+        bit5: '0',
+        bit6: '0',
+        bit7: '0',
+        bit8: '0',
+        bit9: '0',
+        bit10: '0',
+        bit11: '0',
+        bit12: '0',
+        bit13: '0',
+        bit14: '0',
+        bit15: '0'
       },
+      // DBW10 A工位当前码垛数量
+      stationAPalletQty: 0,
+      // DBW12 B工位当前码垛数量
+      stationBPalletQty: 0,
+      // DBW14 A工位码垛完成呼叫AGV出垛
+      stationACallAgv: 0,
+      // DBW16 B工位码垛完成呼叫AGV出垛
+      stationBCallAgv: 0,
+      // DBW18 机器人抓取成功
+      robotGrabSuccess: 0,
+      // DBB30 码垛位扫码信息
+      palletScanCode: '',
+      // DBB50 A工位空托盘码信息
+      stationAEmptyTrayCode: '',
+      // DBB70 B工位空托盘码信息
+      stationBEmptyTrayCode: '',
       // 数据准备就绪标志位
       isDataReady: false
     };
@@ -554,14 +895,80 @@ export default {
     });
     // 保存监听器引用，以便组件销毁时移除，避免重复注册和内存泄漏
     this.receivedMsgHandler = (event, values) => {
-      // 新项目在此按点位表赋值，例如：
-      // const getBit = (word, bitIndex) => ((word >> bitIndex) & 1).toString();
-      // const photoWord = this.convertToWord(values.DBWxx ?? 0);
-      // this.photoelectricSignal.bit0 = getBit(photoWord, 0);
-      // const motorWord = this.convertToWord(values.DBWyy ?? 0);
-      // this.motorRunning.bit0 = getBit(motorWord, 0);
       void event;
-      void values;
+      const getBit = (word, bitIndex) => ((word >> bitIndex) & 1).toString();
+
+      // DBW0 输送线看门狗心跳
+      this.conveyorHeartbeat = Number(values.DBW0 ?? 0);
+      // DBW2 输送线当前运行状态
+      this.conveyorRunStatus = Number(values.DBW2 ?? 0);
+
+      // DBW4 区域报警 BIT 0~7
+      let word4 = this.convertToWord(values.DBW4 ?? 0);
+      this.areaAlarm.bit0 = getBit(word4, 8);
+      this.areaAlarm.bit1 = getBit(word4, 9);
+      this.areaAlarm.bit2 = getBit(word4, 10);
+      this.areaAlarm.bit3 = getBit(word4, 11);
+      this.areaAlarm.bit4 = getBit(word4, 12);
+      this.areaAlarm.bit5 = getBit(word4, 13);
+      this.areaAlarm.bit6 = getBit(word4, 14);
+      this.areaAlarm.bit7 = getBit(word4, 15);
+
+      // DBW6 对接输入信号 BIT 0~15
+      let word6 = this.convertToWord(values.DBW6 ?? 0);
+      this.photoelectricSignal.bit0 = getBit(word6, 8);
+      this.photoelectricSignal.bit1 = getBit(word6, 9);
+      this.photoelectricSignal.bit2 = getBit(word6, 10);
+      this.photoelectricSignal.bit3 = getBit(word6, 11);
+      this.photoelectricSignal.bit4 = getBit(word6, 12);
+      this.photoelectricSignal.bit5 = getBit(word6, 13);
+      this.photoelectricSignal.bit6 = getBit(word6, 14);
+      this.photoelectricSignal.bit7 = getBit(word6, 15);
+      this.photoelectricSignal.bit8 = getBit(word6, 0);
+      this.photoelectricSignal.bit9 = getBit(word6, 1);
+      this.photoelectricSignal.bit10 = getBit(word6, 2);
+      this.photoelectricSignal.bit11 = getBit(word6, 3);
+      this.photoelectricSignal.bit12 = getBit(word6, 4);
+      this.photoelectricSignal.bit13 = getBit(word6, 5);
+      this.photoelectricSignal.bit14 = getBit(word6, 6);
+      this.photoelectricSignal.bit15 = getBit(word6, 7);
+
+      // DBW8 电机运行信号 BIT 0~15
+      let word8 = this.convertToWord(values.DBW8 ?? 0);
+      this.motorRunning.bit0 = getBit(word8, 8);
+      this.motorRunning.bit1 = getBit(word8, 9);
+      this.motorRunning.bit2 = getBit(word8, 10);
+      this.motorRunning.bit3 = getBit(word8, 11);
+      this.motorRunning.bit4 = getBit(word8, 12);
+      this.motorRunning.bit5 = getBit(word8, 13);
+      this.motorRunning.bit6 = getBit(word8, 14);
+      this.motorRunning.bit7 = getBit(word8, 15);
+      this.motorRunning.bit8 = getBit(word8, 0);
+      this.motorRunning.bit9 = getBit(word8, 1);
+      this.motorRunning.bit10 = getBit(word8, 2);
+      this.motorRunning.bit11 = getBit(word8, 3);
+      this.motorRunning.bit12 = getBit(word8, 4);
+      this.motorRunning.bit13 = getBit(word8, 5);
+      this.motorRunning.bit14 = getBit(word8, 6);
+      this.motorRunning.bit15 = getBit(word8, 7);
+
+      // DBW10 A工位当前码垛数量
+      this.stationAPalletQty = Number(values.DBW10 ?? 0);
+      // DBW12 B工位当前码垛数量
+      this.stationBPalletQty = Number(values.DBW12 ?? 0);
+      // DBW14 A工位码垛完成呼叫AGV出垛
+      this.stationACallAgv = Number(values.DBW14 ?? 0);
+      // DBW16 B工位码垛完成呼叫AGV出垛
+      this.stationBCallAgv = Number(values.DBW16 ?? 0);
+      // DBW18 机器人抓取成功
+      this.robotGrabSuccess = Number(values.DBW18 ?? 0);
+
+      // DBB30 码垛位扫码信息
+      this.palletScanCode = values.DBB30 ?? '';
+      // DBB50 A工位空托盘码信息
+      this.stationAEmptyTrayCode = values.DBB50 ?? '';
+      // DBB70 B工位空托盘码信息
+      this.stationBEmptyTrayCode = values.DBB70 ?? '';
     };
     ipcRenderer.on('receivedMsg', this.receivedMsgHandler);
     // 给PLC数据加载时间

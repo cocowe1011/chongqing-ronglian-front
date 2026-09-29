@@ -113,7 +113,7 @@ export default {
           }
         })
         .catch((err) => {
-          this.$message.error(err);
+          this.$message.error((err && err.message) || '登录失败');
           this.loadingStatus = false;
         });
     },

@@ -511,7 +511,7 @@
                   :data-y="arrow.y"
                   :style="{
                     width: arrow.width + 'px',
-                    transform: `translate(-50%, -50%) scale(0.5) rotateZ(${arrow.rotation}deg)`
+                    transform: `translate(-50%, -50%) scale(0.6) rotateZ(${arrow.rotation}deg)`
                   }"
                 >
                   <div
@@ -772,19 +772,68 @@ export default {
       queues: [
         {
           id: 1,
-          queueName: '队列示例',
+          queueName: '上货区',
+          trayInfo: []
+        },
+        {
+          id: 2,
+          queueName: 'A工位',
+          trayInfo: []
+        },
+        {
+          id: 3,
+          queueName: 'B工位',
           trayInfo: []
         }
       ],
       // 添加队列位置标识数据
-      queueMarkers: [{ id: 1, name: '队列示例', queueId: 1, x: 650, y: 780 }],
+      queueMarkers: [
+        { id: 1, name: '上货区', queueId: 1, x: 1580, y: 1680 },
+        { id: 2, name: 'A工位', queueId: 2, x: 1100, y: 800 },
+        { id: 3, name: 'B工位', queueId: 3, x: 1100, y: 390 }
+      ],
       // 输送线流动箭头配置（坐标按平面图调整）
       conveyorArrows: [
         {
-          x: 390,
-          y: 245,
+          x: 1880,
+          y: 1490,
           width: 200,
-          rotation: -2,
+          rotation: 180,
+          arrowCount: 6
+        },
+        {
+          x: 1380,
+          y: 1490,
+          width: 200,
+          rotation: 180,
+          arrowCount: 6
+        },
+        {
+          x: 380,
+          y: 1490,
+          width: 200,
+          rotation: 180,
+          arrowCount: 6
+        },
+        {
+          x: 230,
+          y: 1030,
+          width: 330,
+          rotation: 270,
+          arrowCount: 9
+        },
+        {
+          x: 230,
+          y: 420,
+          width: 100,
+          rotation: 270,
+          arrowCount: 4
+        },
+        {
+          x: 530,
+          y: 590,
+          width: 200,
+          rotation: 0,
           arrowCount: 6
         }
       ],
@@ -878,7 +927,7 @@ export default {
   mounted() {
     this.initializeMarkers();
     this.loadQueueInfoFromDatabase();
-    // 数据加载完成后创建监听（跳过 id 为 1-5 的队列）
+    // 数据加载完成后创建监听（上货区、A工位、B工位）
     this._queueWatchers = []; // 保存 watcher 取消函数
     this._queueInitDone = false; // 初始化标记，跳过首次赋值触发的watch
     this.$nextTick(() => {

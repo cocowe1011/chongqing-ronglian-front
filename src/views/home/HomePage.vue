@@ -40,7 +40,7 @@
 
       <div class="app-body">
         <!-- 微信式左侧导航栏 -->
-        <aside class="side-nav">
+        <aside class="side-nav" :class="{ 'is-collapsed': navCollapsed }">
           <nav class="side-nav-menu">
             <div
               v-for="item in navItems"
@@ -57,6 +57,13 @@
           </nav>
 
           <div class="side-nav-footer">
+            <div
+              class="footer-btn collapse-btn"
+              title="收起菜单"
+              @click="toggleNav"
+            >
+              <el-icon><DArrowLeft /></el-icon>
+            </div>
             <el-dropdown trigger="click" placement="top" @command="setCommand">
               <div class="footer-btn" title="设置">
                 <el-icon><Setting /></el-icon>
@@ -99,6 +106,16 @@
             </el-dropdown>
           </div>
         </aside>
+
+        <!-- 收缩状态下的悬浮展开按钮 -->
+        <div
+          v-if="navCollapsed"
+          class="nav-expand-fab"
+          title="展开菜单"
+          @click="toggleNav"
+        >
+          <el-icon><DArrowRight /></el-icon>
+        </div>
 
         <!-- 主内容区 -->
         <main class="main-panel">
@@ -165,7 +182,8 @@ export default {
         newPassword: '',
         newPasswordAgain: ''
       },
-      userRole: ''
+      userRole: '',
+      navCollapsed: false
     };
   },
   computed: {
@@ -332,6 +350,9 @@ export default {
         default:
           break;
       }
+    },
+    toggleNav() {
+      this.navCollapsed = !this.navCollapsed;
     },
     changeIcon() {
       this.maxWinHandler = (e, status) => {
@@ -520,6 +541,7 @@ export default {
     display: flex;
     min-height: 0;
     overflow: hidden;
+    position: relative;
   }
 
   /* ── 微信式左侧导航 ── */
@@ -531,6 +553,16 @@ export default {
     background: var(--hp-surface);
     border-right: 1px solid var(--hp-border);
     user-select: none;
+    overflow: hidden;
+    transition: width 0.22s ease, opacity 0.22s ease;
+    opacity: 1;
+
+    &.is-collapsed {
+      width: 0;
+      border-right: none;
+      opacity: 0;
+      pointer-events: none;
+    }
 
     &-menu {
       flex: 1;
@@ -638,6 +670,42 @@ export default {
     &:hover {
       background: var(--hp-accent-bg);
       color: var(--hp-accent);
+    }
+
+    &.collapse-btn {
+      font-size: 13px;
+      color: var(--hp-text-secondary);
+    }
+  }
+
+  /* ── 悬浮展开按钮 ── */
+  .nav-expand-fab {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 36px;
+    background: var(--hp-surface);
+    border: 1px solid var(--hp-border);
+    border-left: none;
+    border-radius: 0 18px 18px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 11px;
+    color: var(--hp-text-secondary);
+    z-index: 10;
+    box-shadow: 2px 0 6px rgba(0, 0, 0, 0.06);
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s, width 0.2s;
+
+    &:hover {
+      width: 22px;
+      background: var(--hp-accent);
+      border-color: var(--hp-accent);
+      color: #fff;
+      box-shadow: 2px 0 10px rgba(67, 133, 255, 0.3);
     }
   }
 

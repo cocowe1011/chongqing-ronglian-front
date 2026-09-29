@@ -6,40 +6,40 @@
       <div class="side-info-panel">
         <!-- PLC状态与订单信息区域 -->
         <div class="plc-info-section">
-          <div class="section-header">当前扫码包裹信息</div>
+          <div class="section-header">示例信息</div>
           <div class="scrollable-content">
             <div class="status-overview">
               <div class="data-card">
                 <div class="data-card-border">
                   <div class="data-card-border-borderTop granient-text">
-                    大包号
+                    示例字段一
                   </div>
                   <div class="data-card-border-borderDown">
-                    {{ nowScanTrayInfo.packageNo || '--' }}
-                  </div>
-                </div>
-              </div>
-              <div class="data-card">
-                <div class="data-card-border">
-                  <div class="data-card-border-borderTop">渠道</div>
-                  <div class="data-card-border-borderDown">
-                    {{ nowScanTrayInfo.channel || '--' }}
+                    {{ sampleInfo.field1 || '--' }}
                   </div>
                 </div>
               </div>
               <div class="data-card">
                 <div class="data-card-border">
-                  <div class="data-card-border-borderTop">包装重量</div>
+                  <div class="data-card-border-borderTop">示例字段二</div>
                   <div class="data-card-border-borderDown">
-                    {{ nowScanTrayInfo.packingWeight || '--' }}
+                    {{ sampleInfo.field2 || '--' }}
                   </div>
                 </div>
               </div>
               <div class="data-card">
                 <div class="data-card-border">
-                  <div class="data-card-border-borderTop">小包数量</div>
+                  <div class="data-card-border-borderTop">示例字段三</div>
                   <div class="data-card-border-borderDown">
-                    {{ nowScanTrayInfo.expectedQty || '--' }}
+                    {{ sampleInfo.field3 || '--' }}
+                  </div>
+                </div>
+              </div>
+              <div class="data-card">
+                <div class="data-card-border">
+                  <div class="data-card-border-borderTop">示例字段四</div>
+                  <div class="data-card-border-borderDown">
+                    {{ sampleInfo.field4 || '--' }}
                   </div>
                 </div>
               </div>
@@ -88,14 +88,6 @@
             </button>
             <button @click="toggleButtonState('clear')">
               <el-icon><Delete /></el-icon><span>全线清空</span>
-            </button>
-            <button
-              class="btn-disable"
-              @click="toggleDisableCainiao"
-              :class="{ pressed: disableCainiao }"
-            >
-              <el-icon><Close /></el-icon
-              ><span>{{ disableCainiao ? '启用菜鸟' : '停用菜鸟' }}</span>
             </button>
           </div>
         </div>
@@ -185,8 +177,8 @@
               </div>
               <div class="image-wrapper">
                 <img
-                  src="@/assets/changzhou-img/image.png"
-                  alt="一楼平面图"
+                  src="@/assets/changzhou-img/image.webp"
+                  alt="平面图"
                   class="floor-image"
                   @load="updateMarkerPositions"
                 />
@@ -195,7 +187,6 @@
                   v-for="marker in queueMarkers"
                   :key="marker.id"
                   class="queue-marker"
-                  :class="getQueueMarkerClass(marker.queueId)"
                   :data-x="marker.x"
                   :data-y="marker.y"
                   @click="handleQueueMarkerClick(marker.queueId)"
@@ -205,799 +196,32 @@
                       <span class="queue-marker-count__queue">{{
                         getQueueTrayCount(marker.queueId)
                       }}</span>
-                      <span
-                        v-if="isSortPortQueue(marker.queueId)"
-                        class="queue-marker-count__plc"
-                        >/{{ getSortPortPlcCount(marker.queueId) }}</span
-                      >
                     </span>
                     <span class="queue-marker-name">{{ marker.name }}</span>
-                  </div>
-                  <div
-                    v-if="
-                      queues.find((q) => q.id === marker.queueId)?.isLock ===
-                      '1'
-                    "
-                    class="queue-marker-lock-overlay"
-                    @click.stop="handleUnlockQueue(marker.queueId)"
-                  >
-                    <el-icon><Lock /></el-icon>
-                  </div>
-                  <div
-                    v-if="
-                      queues.find((q) => q.id === marker.queueId)
-                        ?.trayStatus === '3'
-                    "
-                    class="queue-marker-fail-overlay"
-                  >
-                    <el-icon><InfoFilled /></el-icon>
                   </div>
                 </div>
                 <!-- DBW12 光电信号--1 -->
                 <!-- 01001 -->
                 <div
                   class="marker label-right"
-                  :class="{ scanning: photoelectricSignal1.bit0 === '1' }"
+                  :class="{ scanning: photoelectricSignal.bit0 === '1' }"
                   data-x="600"
                   data-y="190"
-                  @click="toggleBitValue(photoelectricSignal1, 'bit0')"
+                  @click="toggleBitValue(photoelectricSignal, 'bit0')"
                 >
-                  <div class="marker-label">01001</div>
-                </div>
-                <!-- 01002 -->
-                <!-- <div
-                  class="marker"
-                  :class="{ scanning: photoelectricSignal1.bit1 === '1' }"
-                  data-x="640"
-                  data-y="1380"
-                  @click="toggleBitValue(photoelectricSignal1, 'bit1')"
-                >
-                  <div class="marker-label">01002</div>
-                </div> -->
-                <!-- 01013光电1 -->
-                <div
-                  class="marker"
-                  :class="{ scanning: photoelectricSignal1.bit2 === '1' }"
-                  data-x="1200"
-                  data-y="1402"
-                  @click="toggleBitValue(photoelectricSignal1, 'bit2')"
-                >
-                  <div class="marker-label">01013-1</div>
-                </div>
-                <!-- 01004 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal1.bit3 === '1' }"
-                  data-x="605"
-                  data-y="870"
-                  @click="toggleBitValue(photoelectricSignal1, 'bit3')"
-                >
-                  <div class="marker-label">01004</div>
-                </div>
-                <!-- 01005 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal1.bit4 === '1' }"
-                  data-x="603"
-                  data-y="945"
-                  @click="toggleBitValue(photoelectricSignal1, 'bit4')"
-                >
-                  <div class="marker-label">01005</div>
-                </div>
-                <!-- 01006 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal1.bit5 === '1' }"
-                  data-x="600"
-                  data-y="1015"
-                  @click="toggleBitValue(photoelectricSignal1, 'bit5')"
-                >
-                  <div class="marker-label">01006</div>
-                </div>
-                <!-- 01007 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal1.bit6 === '1' }"
-                  data-x="595"
-                  data-y="1090"
-                  @click="toggleBitValue(photoelectricSignal1, 'bit6')"
-                >
-                  <div class="marker-label">01007</div>
-                </div>
-                <!-- 01008 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal1.bit7 === '1' }"
-                  data-x="590"
-                  data-y="1155"
-                  @click="toggleBitValue(photoelectricSignal1, 'bit7')"
-                >
-                  <div class="marker-label">01008</div>
-                </div>
-                <!-- 01009 -->
-                <div
-                  class="marker label-right"
-                  :class="{ scanning: photoelectricSignal1.bit8 === '1' }"
-                  data-x="760"
-                  data-y="1210"
-                  @click="toggleBitValue(photoelectricSignal1, 'bit8')"
-                >
-                  <div class="marker-label">01009</div>
-                </div>
-                <!-- 01010 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal1.bit9 === '1' }"
-                  data-x="593"
-                  data-y="1338"
-                  @click="toggleBitValue(photoelectricSignal1, 'bit9')"
-                >
-                  <div class="marker-label">01010</div>
-                </div>
-                <!-- 01011 -->
-                <div
-                  class="marker"
-                  :class="{ scanning: photoelectricSignal1.bit10 === '1' }"
-                  data-x="760"
-                  data-y="1400"
-                  @click="toggleBitValue(photoelectricSignal1, 'bit10')"
-                >
-                  <div class="marker-label">01011</div>
-                </div>
-                <!-- 01012 -->
-                <div
-                  class="marker"
-                  :class="{ scanning: photoelectricSignal1.bit11 === '1' }"
-                  data-x="860"
-                  data-y="1402"
-                  @click="toggleBitValue(photoelectricSignal1, 'bit11')"
-                >
-                  <div class="marker-label">01012</div>
-                </div>
-                <!-- 01013光电2 -->
-                <div
-                  class="marker"
-                  :class="{ scanning: photoelectricSignal1.bit12 === '1' }"
-                  data-x="1350"
-                  data-y="1402"
-                  @click="toggleBitValue(photoelectricSignal1, 'bit12')"
-                >
-                  <div class="marker-label">01013-2</div>
-                </div>
-                <!-- 01014 -->
-                <div
-                  class="marker"
-                  :class="{ scanning: photoelectricSignal1.bit13 === '1' }"
-                  data-x="1490"
-                  data-y="1402"
-                  @click="toggleBitValue(photoelectricSignal1, 'bit13')"
-                >
-                  <div class="marker-label">01014</div>
-                </div>
-                <!-- 01015 -->
-                <div
-                  class="marker"
-                  :class="{ scanning: photoelectricSignal1.bit14 === '1' }"
-                  data-x="1620"
-                  data-y="1402"
-                  @click="toggleBitValue(photoelectricSignal1, 'bit14')"
-                >
-                  <div class="marker-label">01015</div>
-                </div>
-                <!-- 01016 -->
-                <div
-                  class="marker"
-                  :class="{ scanning: photoelectricSignal1.bit15 === '1' }"
-                  data-x="1820"
-                  data-y="1402"
-                  @click="toggleBitValue(photoelectricSignal1, 'bit15')"
-                >
-                  <div class="marker-label">01016</div>
-                </div>
-                <!-- DBW14 光电信号--2 -->
-                <!-- 01017 -->
-                <div
-                  class="marker"
-                  :class="{ scanning: photoelectricSignal2.bit0 === '1' }"
-                  data-x="2010"
-                  data-y="1402"
-                  @click="toggleBitValue(photoelectricSignal2, 'bit0')"
-                >
-                  <div class="marker-label">01017</div>
-                </div>
-                <!-- 01018 -->
-                <div
-                  class="marker"
-                  :class="{ scanning: photoelectricSignal2.bit1 === '1' }"
-                  data-x="2190"
-                  data-y="1402"
-                  @click="toggleBitValue(photoelectricSignal2, 'bit1')"
-                >
-                  <div class="marker-label">01018</div>
-                </div>
-                <!-- 01019 -->
-                <div
-                  class="marker"
-                  :class="{ scanning: photoelectricSignal2.bit2 === '1' }"
-                  data-x="2368"
-                  data-y="1402"
-                  @click="toggleBitValue(photoelectricSignal2, 'bit2')"
-                >
-                  <div class="marker-label">01019</div>
-                </div>
-                <!-- 01020 -->
-                <div
-                  class="marker"
-                  :class="{ scanning: photoelectricSignal2.bit3 === '1' }"
-                  data-x="2555"
-                  data-y="1402"
-                  @click="toggleBitValue(photoelectricSignal2, 'bit3')"
-                >
-                  <div class="marker-label">01020</div>
-                </div>
-                <!-- 01021 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal2.bit4 === '1' }"
-                  data-x="1660"
-                  data-y="1120"
-                  @click="toggleBitValue(photoelectricSignal2, 'bit4')"
-                >
-                  <div class="marker-label">01021</div>
-                </div>
-                <!-- 01022 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal2.bit5 === '1' }"
-                  data-x="1660"
-                  data-y="1530"
-                  @click="toggleBitValue(photoelectricSignal2, 'bit5')"
-                >
-                  <div class="marker-label">01022</div>
-                </div>
-                <!-- 01023 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal2.bit6 === '1' }"
-                  data-x="1840"
-                  data-y="1120"
-                  @click="toggleBitValue(photoelectricSignal2, 'bit6')"
-                >
-                  <div class="marker-label">01023</div>
-                </div>
-                <!-- 01024 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal2.bit7 === '1' }"
-                  data-x="1840"
-                  data-y="1530"
-                  @click="toggleBitValue(photoelectricSignal2, 'bit7')"
-                >
-                  <div class="marker-label">01024</div>
-                </div>
-                <!-- 01025 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal2.bit8 === '1' }"
-                  data-x="2025"
-                  data-y="1120"
-                  @click="toggleBitValue(photoelectricSignal2, 'bit8')"
-                >
-                  <div class="marker-label">01025</div>
-                </div>
-                <!-- 01026 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal2.bit9 === '1' }"
-                  data-x="2025"
-                  data-y="1530"
-                  @click="toggleBitValue(photoelectricSignal2, 'bit9')"
-                >
-                  <div class="marker-label">01026</div>
-                </div>
-                <!-- 01027 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal2.bit10 === '1' }"
-                  data-x="2210"
-                  data-y="1120"
-                  @click="toggleBitValue(photoelectricSignal2, 'bit10')"
-                >
-                  <div class="marker-label">01027</div>
-                </div>
-                <!-- 01028 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal2.bit11 === '1' }"
-                  data-x="2210"
-                  data-y="1530"
-                  @click="toggleBitValue(photoelectricSignal2, 'bit11')"
-                >
-                  <div class="marker-label">01028</div>
-                </div>
-                <!-- 01029 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal2.bit12 === '1' }"
-                  data-x="2390"
-                  data-y="1120"
-                  @click="toggleBitValue(photoelectricSignal2, 'bit12')"
-                >
-                  <div class="marker-label">01029</div>
-                </div>
-                <!-- 01030 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal2.bit13 === '1' }"
-                  data-x="2390"
-                  data-y="1530"
-                  @click="toggleBitValue(photoelectricSignal2, 'bit13')"
-                >
-                  <div class="marker-label">01030</div>
-                </div>
-                <!-- 01031 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal2.bit14 === '1' }"
-                  data-x="2575"
-                  data-y="1120"
-                  @click="toggleBitValue(photoelectricSignal2, 'bit14')"
-                >
-                  <div class="marker-label">01031</div>
-                </div>
-                <!-- 01032 -->
-                <div
-                  class="marker label-left"
-                  :class="{ scanning: photoelectricSignal2.bit15 === '1' }"
-                  data-x="2575"
-                  data-y="1530"
-                  @click="toggleBitValue(photoelectricSignal2, 'bit15')"
-                >
-                  <div class="marker-label">01032</div>
+                  <div class="marker-label">光电</div>
                 </div>
                 <!-- DBW6 电机运行信号 01001-01016 -->
                 <!-- 01001 -->
                 <div
                   class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord6.bit0 === '1' }"
+                  :class="{ running: motorRunning.bit0 === '1' }"
                   data-x="400"
                   data-y="245"
-                  @click="toggleBitValue(motorRunningWord6, 'bit0')"
+                  @click="toggleBitValue(motorRunning, 'bit0')"
                 >
-                  <div class="marker-label">01001</div>
+                  <div class="marker-label">电机</div>
                 </div>
-                <!-- 01002 -->
-                <div
-                  class="motor-marker marker-show-label label-right"
-                  :class="{ running: motorRunningWord6.bit1 === '1' }"
-                  data-x="650"
-                  data-y="260"
-                  @click="toggleBitValue(motorRunningWord6, 'bit1')"
-                >
-                  <div class="marker-label">01002</div>
-                </div>
-                <!-- 01003 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord6.bit2 === '1' }"
-                  data-x="665"
-                  data-y="445"
-                  @click="toggleBitValue(motorRunningWord6, 'bit2')"
-                >
-                  <div class="marker-label">01003</div>
-                </div>
-                <!-- 01004 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord6.bit3 === '1' }"
-                  data-x="660"
-                  data-y="660"
-                  @click="toggleBitValue(motorRunningWord6, 'bit3')"
-                >
-                  <div class="marker-label">01004</div>
-                </div>
-                <!-- 01005 -->
-                <div
-                  class="motor-marker marker-show-label label-right"
-                  :class="{ running: motorRunningWord6.bit4 === '1' }"
-                  data-x="650"
-                  data-y="900"
-                  @click="toggleBitValue(motorRunningWord6, 'bit4')"
-                >
-                  <div class="marker-label">01005</div>
-                </div>
-                <!-- 01006 -->
-                <div
-                  class="motor-marker marker-show-label label-right"
-                  :class="{ running: motorRunningWord6.bit5 === '1' }"
-                  data-x="648"
-                  data-y="980"
-                  @click="toggleBitValue(motorRunningWord6, 'bit5')"
-                >
-                  <div class="marker-label">01006</div>
-                </div>
-                <!-- 01007 -->
-                <div
-                  class="motor-marker marker-show-label label-right"
-                  :class="{ running: motorRunningWord6.bit6 === '1' }"
-                  data-x="646"
-                  data-y="1060"
-                  @click="toggleBitValue(motorRunningWord6, 'bit6')"
-                >
-                  <div class="marker-label">01007</div>
-                </div>
-                <!-- 01008 -->
-                <div
-                  class="motor-marker marker-show-label label-right"
-                  :class="{ running: motorRunningWord6.bit7 === '1' }"
-                  data-x="642"
-                  data-y="1140"
-                  @click="toggleBitValue(motorRunningWord6, 'bit7')"
-                >
-                  <div class="marker-label">01008</div>
-                </div>
-                <!-- 01009 -->
-                <div
-                  class="motor-marker marker-show-label label-left"
-                  :class="{ running: motorRunningWord6.bit8 === '1' }"
-                  data-x="639"
-                  data-y="1210"
-                  @click="toggleBitValue(motorRunningWord6, 'bit8')"
-                >
-                  <div class="marker-label">01009</div>
-                </div>
-                <!-- 01010 -->
-                <div
-                  class="motor-marker marker-show-label label-left"
-                  :class="{ running: motorRunningWord6.bit9 === '1' }"
-                  data-x="637"
-                  data-y="1278"
-                  @click="toggleBitValue(motorRunningWord6, 'bit9')"
-                >
-                  <div class="marker-label">01010</div>
-                </div>
-                <!-- 01011 -->
-                <div
-                  class="motor-marker marker-show-label label-bottom"
-                  :class="{ running: motorRunningWord6.bit10 === '1' }"
-                  data-x="662"
-                  data-y="1330"
-                  @click="toggleBitValue(motorRunningWord6, 'bit10')"
-                >
-                  <div class="marker-label">01011</div>
-                </div>
-                <!-- 01012 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord6.bit11 === '1' }"
-                  data-x="760"
-                  data-y="1345"
-                  @click="toggleBitValue(motorRunningWord6, 'bit11')"
-                >
-                  <div class="marker-label">01012</div>
-                </div>
-                <!-- 01013 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord6.bit12 === '1' }"
-                  data-x="1260"
-                  data-y="1335"
-                  @click="toggleBitValue(motorRunningWord6, 'bit12')"
-                >
-                  <div class="marker-label">01013</div>
-                </div>
-                <!-- 01014 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord6.bit13 === '1' }"
-                  data-x="1420"
-                  data-y="1335"
-                  @click="toggleBitValue(motorRunningWord6, 'bit13')"
-                >
-                  <div class="marker-label">01014</div>
-                </div>
-                <!-- 01015 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord6.bit14 === '1' }"
-                  data-x="1580"
-                  data-y="1335"
-                  @click="toggleBitValue(motorRunningWord6, 'bit14')"
-                >
-                  <div class="marker-label">01015</div>
-                </div>
-                <!-- 01016 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord6.bit15 === '1' }"
-                  data-x="1820"
-                  data-y="1335"
-                  @click="toggleBitValue(motorRunningWord6, 'bit15')"
-                >
-                  <div class="marker-label">01016</div>
-                </div>
-                <!-- DBW8 电机运行信号 01017-01030（bit14/15 备用不生成） -->
-                <!-- 01017 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord8.bit0 === '1' }"
-                  data-x="2010"
-                  data-y="1335"
-                  @click="toggleBitValue(motorRunningWord8, 'bit0')"
-                >
-                  <div class="marker-label">01017</div>
-                </div>
-                <!-- 01018 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord8.bit1 === '1' }"
-                  data-x="2190"
-                  data-y="1335"
-                  @click="toggleBitValue(motorRunningWord8, 'bit1')"
-                >
-                  <div class="marker-label">01018</div>
-                </div>
-                <!-- 01019 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord8.bit2 === '1' }"
-                  data-x="2368"
-                  data-y="1335"
-                  @click="toggleBitValue(motorRunningWord8, 'bit2')"
-                >
-                  <div class="marker-label">01019</div>
-                </div>
-                <!-- 01020 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord8.bit3 === '1' }"
-                  data-x="2555"
-                  data-y="1335"
-                  @click="toggleBitValue(motorRunningWord8, 'bit3')"
-                >
-                  <div class="marker-label">01020</div>
-                </div>
-                <!-- 01021 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord8.bit4 === '1' }"
-                  data-x="1730"
-                  data-y="1220"
-                  @click="toggleBitValue(motorRunningWord8, 'bit4')"
-                >
-                  <div class="marker-label">01021</div>
-                </div>
-                <!-- 01022 -->
-                <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord8.bit5 === '1' }"
-                  data-x="1730"
-                  data-y="1420"
-                  @click="toggleBitValue(motorRunningWord8, 'bit5')"
-                >
-                  <div class="marker-label">01022</div>
-                </div>
-                <!-- 01023 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord8.bit6 === '1' }"
-                  data-x="1910"
-                  data-y="1220"
-                  @click="toggleBitValue(motorRunningWord8, 'bit6')"
-                >
-                  <div class="marker-label">01023</div>
-                </div>
-                <!-- 01024 -->
-                <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord8.bit7 === '1' }"
-                  data-x="1910"
-                  data-y="1420"
-                  @click="toggleBitValue(motorRunningWord8, 'bit7')"
-                >
-                  <div class="marker-label">01024</div>
-                </div>
-                <!-- 01025 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord8.bit8 === '1' }"
-                  data-x="2100"
-                  data-y="1220"
-                  @click="toggleBitValue(motorRunningWord8, 'bit8')"
-                >
-                  <div class="marker-label">01025</div>
-                </div>
-                <!-- 01026 -->
-                <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord8.bit9 === '1' }"
-                  data-x="2100"
-                  data-y="1420"
-                  @click="toggleBitValue(motorRunningWord8, 'bit9')"
-                >
-                  <div class="marker-label">01026</div>
-                </div>
-                <!-- 01027 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord8.bit10 === '1' }"
-                  data-x="2280"
-                  data-y="1220"
-                  @click="toggleBitValue(motorRunningWord8, 'bit10')"
-                >
-                  <div class="marker-label">01027</div>
-                </div>
-                <!-- 01028 -->
-                <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord8.bit11 === '1' }"
-                  data-x="2280"
-                  data-y="1420"
-                  @click="toggleBitValue(motorRunningWord8, 'bit11')"
-                >
-                  <div class="marker-label">01028</div>
-                </div>
-                <!-- 01029 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord8.bit12 === '1' }"
-                  data-x="2460"
-                  data-y="1220"
-                  @click="toggleBitValue(motorRunningWord8, 'bit12')"
-                >
-                  <div class="marker-label">01029</div>
-                </div>
-                <!-- 01030 -->
-                <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord8.bit13 === '1' }"
-                  data-x="2460"
-                  data-y="1420"
-                  @click="toggleBitValue(motorRunningWord8, 'bit13')"
-                >
-                  <div class="marker-label">01030</div>
-                </div>
-                <!-- 01031 -->
-                <div
-                  class="motor-marker marker-show-label label-top"
-                  :class="{ running: motorRunningWord8.bit14 === '1' }"
-                  data-x="2650"
-                  data-y="1220"
-                  @click="toggleBitValue(motorRunningWord8, 'bit14')"
-                >
-                  <div class="marker-label">01031</div>
-                </div>
-                <!-- 01032 -->
-                <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord8.bit15 === '1' }"
-                  data-x="2655"
-                  data-y="1420"
-                  @click="toggleBitValue(motorRunningWord8, 'bit15')"
-                >
-                  <div class="marker-label">01032</div>
-                </div>
-                <!-- DBW10 分拣电机运行信号 -->
-                <!-- 分拣1左执行 -->
-                <!-- <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord10.bit0 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
-                  @click="toggleBitValue(motorRunningWord10, 'bit0')"
-                >
-                  <div class="marker-label">分拣1左</div>
-                </div> -->
-                <!-- 分拣机1右执行 -->
-                <!-- <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord10.bit1 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
-                  @click="toggleBitValue(motorRunningWord10, 'bit1')"
-                >
-                  <div class="marker-label">分拣1右</div>
-                </div> -->
-                <!-- 分拣机2左执行 -->
-                <!-- <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord10.bit2 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
-                  @click="toggleBitValue(motorRunningWord10, 'bit2')"
-                >
-                  <div class="marker-label">分拣2左</div>
-                </div> -->
-                <!-- 分拣机2右执行 -->
-                <!-- <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord10.bit3 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
-                  @click="toggleBitValue(motorRunningWord10, 'bit3')"
-                >
-                  <div class="marker-label">分拣2右</div>
-                </div> -->
-                <!-- 分拣机3左执行 -->
-                <!-- <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord10.bit4 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
-                  @click="toggleBitValue(motorRunningWord10, 'bit4')"
-                >
-                  <div class="marker-label">分拣3左</div>
-                </div> -->
-                <!-- 分拣机3右执行 -->
-                <!-- <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord10.bit5 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
-                  @click="toggleBitValue(motorRunningWord10, 'bit5')"
-                >
-                  <div class="marker-label">分拣3右</div>
-                </div> -->
-                <!-- 分拣机4左执行 -->
-                <!-- <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord10.bit6 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
-                  @click="toggleBitValue(motorRunningWord10, 'bit6')"
-                >
-                  <div class="marker-label">分拣4左</div>
-                </div> -->
-                <!-- 分拣机4右执行 -->
-                <!-- <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord10.bit7 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
-                  @click="toggleBitValue(motorRunningWord10, 'bit7')"
-                >
-                  <div class="marker-label">分拣4右</div>
-                </div> -->
-                <!-- 分拣机5左执行 -->
-                <!-- <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord10.bit8 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
-                  @click="toggleBitValue(motorRunningWord10, 'bit8')"
-                >
-                  <div class="marker-label">分拣5左</div>
-                </div> -->
-                <!-- 分拣机5右执行 -->
-                <!-- <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord10.bit9 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
-                  @click="toggleBitValue(motorRunningWord10, 'bit9')"
-                >
-                  <div class="marker-label">分拣5右</div>
-                </div> -->
-                <!-- 分拣机6左执行 -->
-                <!-- <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord10.bit10 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
-                  @click="toggleBitValue(motorRunningWord10, 'bit10')"
-                >
-                  <div class="marker-label">分拣6左</div>
-                </div> -->
-                <!-- 分拣机6右执行 -->
-                <!-- <div
-                  class="motor-marker marker-show-label"
-                  :class="{ running: motorRunningWord10.bit11 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
-                  @click="toggleBitValue(motorRunningWord10, 'bit11')"
-                >
-                  <div class="marker-label">分拣6右</div>
-                </div> -->
                 <!-- 输送线流动箭头 -->
                 <div
                   v-for="(arrow, index) in conveyorArrows"
@@ -1016,138 +240,20 @@
                     class="conveyor-arrow-item"
                   ></div>
                 </div>
-                <!-- 六面扫扫码上货面板 -->
+                <!-- 输送线数据看板：上货队列与分拣口 -->
                 <div class="marker-with-panel" data-x="1150" data-y="1200">
                   <div
                     class="data-panel"
                     :class="['position-top', { 'always-show': true }]"
                     style="width: 210px"
                   >
+                    <div class="data-panel-header">数据看板</div>
                     <div class="data-panel-content">
                       <div class="data-panel-row">
-                        <span class="data-panel-label">
-                          <span
-                            class="status-dot"
-                            :style="{
-                              backgroundColor: sixScanSocketConnected
-                                ? '#67c23a'
-                                : '#f56c6c'
-                            }"
-                          ></span>
-                          六面扫条码：
-                        </span>
+                        <span class="data-panel-label">示例数值：</span>
                         <span class="barcode-value">{{
-                          lastProcessedBarcode || '--'
+                          sampleValue || '--'
                         }}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- 输送线数据看板：上货队列与分拣口 -->
-                <div class="marker-with-panel" data-x="2900" data-y="350">
-                  <div
-                    class="data-panel"
-                    :class="['position-left', { 'always-show': true }]"
-                    style="width: 800px"
-                  >
-                    <div class="data-panel-header">输送线数据看板</div>
-                    <div class="data-panel-content" style="padding-top: 5px">
-                      <div class="scan-groups-grid">
-                        <!-- 第一行：上货队列件数 + 分拣口 1~3 -->
-                        <div class="scan-group-row">
-                          <div class="scan-group with-watermark belt-ids-card">
-                            <div class="group-watermark">上货</div>
-                            <div class="group-items">
-                              <div class="scan-item">
-                                <span class="scan-label">上货队列</span>
-                                <span class="scan-value"
-                                  >{{ queues[0]?.trayInfo?.length || 0 }} 件
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <div
-                            class="scan-group with-watermark sort-port-card"
-                            v-for="port in [1, 2, 3]"
-                            :key="'sort-port-' + port"
-                          >
-                            <div class="group-watermark">{{ port }}</div>
-                            <div class="group-items">
-                              <div class="scan-item">
-                                <span class="scan-label">呼叫AGV</span>
-                                <button
-                                  class="port-send-btn"
-                                  title="发送呼叫"
-                                  @click="callAgv(port)"
-                                >
-                                  <el-icon><Promotion /></el-icon>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <!-- 第二行：分拣口 4~7 -->
-                        <div class="scan-group-row">
-                          <div
-                            class="scan-group with-watermark sort-port-card"
-                            v-for="port in [4, 5, 6, 7]"
-                            :key="'sort-port-' + port"
-                          >
-                            <div class="group-watermark">{{ port }}</div>
-                            <div class="group-items">
-                              <div class="scan-item">
-                                <span class="scan-label">呼叫AGV</span>
-                                <button
-                                  class="port-send-btn"
-                                  title="发送呼叫"
-                                  @click="callAgv(port)"
-                                >
-                                  <el-icon><Promotion /></el-icon>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <!-- 第三行：分拣口 8~11 -->
-                        <div class="scan-group-row">
-                          <div
-                            class="scan-group with-watermark sort-port-card"
-                            v-for="port in [8, 9, 10, 11]"
-                            :key="'sort-port-' + port"
-                          >
-                            <div class="group-watermark">{{ port }}</div>
-                            <div class="group-items">
-                              <div class="scan-item">
-                                <span class="scan-label">呼叫AGV</span>
-                                <button
-                                  class="port-send-btn"
-                                  title="发送呼叫"
-                                  @click="callAgv(port)"
-                                >
-                                  <el-icon><Promotion /></el-icon>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <!-- 第四行：分拣口 12（X光机异常口，满5呼叫AGV） -->
-                        <div class="scan-group-row">
-                          <div class="scan-group with-watermark sort-port-card">
-                            <div class="group-watermark">12</div>
-                            <div class="group-items">
-                              <div class="scan-item">
-                                <span class="scan-label">呼叫AGV</span>
-                                <button
-                                  class="port-send-btn"
-                                  title="发送呼叫"
-                                  @click="callAgv(12)"
-                                >
-                                  <el-icon><Promotion /></el-icon>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -1205,34 +311,6 @@
                   queue.trayInfo?.length || 0
                 }}</span>
                 <!-- AGV状态标签 -->
-                <el-tag
-                  v-if="queue.trayStatus === '0'"
-                  size="small"
-                  type="warning"
-                  style="margin-left: 4px"
-                  >等待AGV取货</el-tag
-                >
-                <el-tag
-                  v-else-if="queue.trayStatus === '1'"
-                  size="small"
-                  type="info"
-                  style="margin-left: 4px"
-                  >AGV取货完成</el-tag
-                >
-                <el-tag
-                  v-else-if="queue.trayStatus === '2'"
-                  size="small"
-                  type="success"
-                  style="margin-left: 4px"
-                  >空托已返回</el-tag
-                >
-                <el-tag
-                  v-else-if="queue.trayStatus === '3'"
-                  size="small"
-                  type="danger"
-                  style="margin-left: 4px"
-                  >AGV调用失败</el-tag
-                >
               </div>
             </div>
 
@@ -1253,11 +331,14 @@
                     :key="'tray-' + tray.id + '-' + index"
                     class="tray-item"
                     :class="{
-                      dragging: isDragging && draggedTray?.id === tray.id
+                      dragging:
+                        isDragging &&
+                        dragSourceQueue === selectedQueueIndex &&
+                        draggedTrayIndex === index
                     }"
                     draggable="true"
                     @dragstart="
-                      handleDragStart($event, tray, selectedQueueIndex)
+                      handleDragStart($event, tray, selectedQueueIndex, index)
                     "
                     @dragend="handleDragEnd"
                   >
@@ -1345,168 +426,19 @@
         <div class="test-panel-content">
           <!-- 添加扫码测试部分 -->
           <div class="test-section">
-            <span class="test-label">扫码信息测试:</span>
+            <span class="test-label">测试项:</span>
             <div class="qrcode-test-container">
               <div class="qrcode-input-group">
-                <div class="qrcode-label">五面扫:</div>
                 <el-input
-                  v-model="sixScanBarcode"
+                  v-model="testInput"
                   size="small"
-                  placeholder="输入扫码信息"
+                  placeholder="输入测试内容"
                   class="qrcode-input"
                 ></el-input>
               </div>
-              <el-button
-                type="warning"
-                size="small"
-                @click="triggerScanEnqueue"
-              >
-                模拟上货触发信号
+              <el-button type="warning" size="small" @click="runSampleTest">
+                执行测试
               </el-button>
-            </div>
-          </div>
-          <!-- 分拣机光电手动触发 -->
-          <div class="test-section">
-            <span class="test-label">分拣机光电模拟(01015~01020):</span>
-            <div class="qrcode-test-container">
-              <el-button
-                v-for="n in 6"
-                :key="'sorter-photo-' + n"
-                type="warning"
-                size="small"
-                @click="triggerSorterPhoto(n)"
-              >
-                分拣机{{ n }}
-              </el-button>
-            </div>
-          </div>
-          <div class="test-section">
-            <span class="test-label">X光机模拟:</span>
-            <div class="qrcode-test-container">
-              <el-button
-                :type="wcsDockWord16.bit0 === '1' ? 'danger' : 'info'"
-                size="small"
-                @click="toggleXrayRejectSignal"
-              >
-                X机剔除信号 {{ wcsDockWord16.bit0 === '1' ? '开' : '关' }}
-              </el-button>
-              <el-button type="warning" size="small" @click="triggerXrayPhoto">
-                X光电下降沿
-              </el-button>
-            </div>
-          </div>
-          <!-- DBW1224~DBW1246 分拣口PLC计数测试 -->
-          <div class="test-section">
-            <span class="test-label">分拣口PLC计数(DBW1224~1246):</span>
-            <div class="qrcode-test-container qrcode-input-grid">
-              <div class="qrcode-input-group">
-                <div class="qrcode-label">口1:</div>
-                <el-input
-                  v-model.number="sortPortPlcCounts[1]"
-                  size="small"
-                  placeholder="计数"
-                  class="qrcode-input"
-                ></el-input>
-              </div>
-              <div class="qrcode-input-group">
-                <div class="qrcode-label">口2:</div>
-                <el-input
-                  v-model.number="sortPortPlcCounts[2]"
-                  size="small"
-                  placeholder="计数"
-                  class="qrcode-input"
-                ></el-input>
-              </div>
-              <div class="qrcode-input-group">
-                <div class="qrcode-label">口3:</div>
-                <el-input
-                  v-model.number="sortPortPlcCounts[3]"
-                  size="small"
-                  placeholder="计数"
-                  class="qrcode-input"
-                ></el-input>
-              </div>
-              <div class="qrcode-input-group">
-                <div class="qrcode-label">口4:</div>
-                <el-input
-                  v-model.number="sortPortPlcCounts[4]"
-                  size="small"
-                  placeholder="计数"
-                  class="qrcode-input"
-                ></el-input>
-              </div>
-              <div class="qrcode-input-group">
-                <div class="qrcode-label">口5:</div>
-                <el-input
-                  v-model.number="sortPortPlcCounts[5]"
-                  size="small"
-                  placeholder="计数"
-                  class="qrcode-input"
-                ></el-input>
-              </div>
-              <div class="qrcode-input-group">
-                <div class="qrcode-label">口6:</div>
-                <el-input
-                  v-model.number="sortPortPlcCounts[6]"
-                  size="small"
-                  placeholder="计数"
-                  class="qrcode-input"
-                ></el-input>
-              </div>
-              <div class="qrcode-input-group">
-                <div class="qrcode-label">口7:</div>
-                <el-input
-                  v-model.number="sortPortPlcCounts[7]"
-                  size="small"
-                  placeholder="计数"
-                  class="qrcode-input"
-                ></el-input>
-              </div>
-              <div class="qrcode-input-group">
-                <div class="qrcode-label">口8:</div>
-                <el-input
-                  v-model.number="sortPortPlcCounts[8]"
-                  size="small"
-                  placeholder="计数"
-                  class="qrcode-input"
-                ></el-input>
-              </div>
-              <div class="qrcode-input-group">
-                <div class="qrcode-label">口9:</div>
-                <el-input
-                  v-model.number="sortPortPlcCounts[9]"
-                  size="small"
-                  placeholder="计数"
-                  class="qrcode-input"
-                ></el-input>
-              </div>
-              <div class="qrcode-input-group">
-                <div class="qrcode-label">口10:</div>
-                <el-input
-                  v-model.number="sortPortPlcCounts[10]"
-                  size="small"
-                  placeholder="计数"
-                  class="qrcode-input"
-                ></el-input>
-              </div>
-              <div class="qrcode-input-group">
-                <div class="qrcode-label">口11:</div>
-                <el-input
-                  v-model.number="sortPortPlcCounts[11]"
-                  size="small"
-                  placeholder="计数"
-                  class="qrcode-input"
-                ></el-input>
-              </div>
-              <div class="qrcode-input-group">
-                <div class="qrcode-label">口12:</div>
-                <el-input
-                  v-model.number="sortPortPlcCounts[12]"
-                  size="small"
-                  placeholder="计数"
-                  class="qrcode-input"
-                ></el-input>
-              </div>
             </div>
           </div>
         </div>
@@ -1520,24 +452,8 @@
 
 <script>
 import HttpUtil from '@/utils/HttpUtil';
-import HttpUtilMcs from '@/utils/HttpUtilMcs';
-import HttpUtilCainiao from '@/utils/HttpUtilCainiao';
-import { EventBus } from '@/utils/EventBus';
-import moment from 'moment';
 import { ipcRenderer } from 'electron';
 import OrderQueryDialog from '@/components/OrderQueryDialog.vue';
-import {
-  mockPackageByBarcode,
-  mapCainiaoToPackage,
-  toOrderInfoPayload
-} from '@/utils/packageMockData';
-
-const net = require('net');
-
-// 六面扫TCP连接配置
-const SIX_SCAN_HOST = '192.168.4.227';
-const SIX_SCAN_PORT = 2002;
-const SIX_SCAN_RECONNECT_DELAY = 3000; // 3秒重连
 
 export default {
   name: 'MainPage',
@@ -1546,119 +462,14 @@ export default {
   },
   data() {
     return {
-      nowScanTrayInfo: {},
-      sixScanBarcode: '',
-      lastProcessedBarcode: '',
-      sixScanProcessing: false,
-      // DBW1252 读码上货触发信号当前值（0 -> 非0 上升沿触发进队）
-      uploadTriggerSignal: 0,
-      // 上货触发限流时间戳（2秒内重复信号不处理，参照历史目的地请求限流）
-      lastUploadTriggerTime: 0,
-      // 分拣口循环下发游标（满容量后按 1→11 顺序循环开新空口）
-      lastAllocPortNo: 0,
-      // 六面扫Socket连接状态
-      sixScanSocketConnected: false,
-      // 分拣口容量统一配置（通用口共用：大包容量/小包容量；12号异常口固定容量不区分大小件）
-      largePortCapacity: 5,
-      smallPortCapacity: 8,
-      exceptionPortCapacity: 5,
-      // 分拣口配置（1-11通用口，不区分大小件；12异常口）
-      // 方向：1=左转（偶数口，布局图上排），2=右转（奇数口，布局图下排）
-      sortPortConfig: [
-        {
-          portNo: 1,
-          machineNo: 1,
-          direction: 2,
-          sizeType: 'normal'
-        },
-        {
-          portNo: 2,
-          machineNo: 1,
-          direction: 1,
-          sizeType: 'normal'
-        },
-        {
-          portNo: 3,
-          machineNo: 2,
-          direction: 2,
-          sizeType: 'normal'
-        },
-        {
-          portNo: 4,
-          machineNo: 2,
-          direction: 1,
-          sizeType: 'normal'
-        },
-        {
-          portNo: 5,
-          machineNo: 3,
-          direction: 2,
-          sizeType: 'normal'
-        },
-        {
-          portNo: 6,
-          machineNo: 3,
-          direction: 1,
-          sizeType: 'normal'
-        },
-        {
-          portNo: 7,
-          machineNo: 4,
-          direction: 2,
-          sizeType: 'normal'
-        },
-        {
-          portNo: 8,
-          machineNo: 4,
-          direction: 1,
-          sizeType: 'normal'
-        },
-        {
-          portNo: 9,
-          machineNo: 5,
-          direction: 2,
-          sizeType: 'normal'
-        },
-        {
-          portNo: 10,
-          machineNo: 5,
-          direction: 1,
-          sizeType: 'normal'
-        },
-        {
-          portNo: 11,
-          machineNo: 6,
-          direction: 2,
-          sizeType: 'normal'
-        },
-        {
-          portNo: 12,
-          machineNo: 6,
-          direction: 1,
-          sizeType: 'exception'
-        }
-      ],
-      // 从五面扫进队到各分拣机的固定行进时间（毫秒）
-      sorterTravelTimes: {
-        1: 19000,
-        2: 23000,
-        3: 27000,
-        4: 30000,
-        5: 34000,
-        6: 38000
+      sampleInfo: {
+        field1: '',
+        field2: '',
+        field3: '',
+        field4: ''
       },
-      // 到达时间匹配正向容差（毫秒，货物早到），可由配置页动态刷新
-      sorterArrivalTolerance: 2000,
-      // 到达时间匹配负向容差（毫秒，货物晚到），配置存 css_config.speed_two
-      sorterArrivalToleranceNeg: 2000,
-      // 从五面扫进队到X光机光电的固定行进时间（毫秒）
-      xrayTravelTime: 11000,
-      // 已发命令货物的超时清理阈值（毫秒），可由配置页动态刷新
-      cmdSentTimeoutMs: 4500,
-      // 未发转向命令：超过「进队+到达分拣机时长」后再等这么久仍未发命令，视为意外，从上货队列删除
-      cmdNotSentOverdueMs: 5000,
-      // 上货队列清理轮询定时器
-      uploadQueueCleanTimer: null,
+      sampleValue: '',
+      testInput: '',
       showTestPanel: false,
       orderQueryDialogVisible: false,
       buttonStates: {
@@ -1668,13 +479,12 @@ export default {
         fault_reset: false,
         clear: false
       },
-      // 停用菜鸟：true 走 mock，false（默认）查菜鸟大包接口
-      disableCainiao: false,
       activeLogType: 'running',
       runningLogs: [], // 修改为空数组
       alarmLogs: [], // 修改为空数组
       nowTrays: [],
       draggedTray: null,
+      draggedTrayIndex: null,
       dragSourceQueue: null,
       isQueueExpanded: false,
       selectedQueueIndex: 0,
@@ -1682,110 +492,12 @@ export default {
       queues: [
         {
           id: 1,
-          queueName: '上货队列',
+          queueName: '队列示例',
           trayInfo: []
-        },
-        {
-          id: 2,
-          queueName: '分拣口1',
-          trayInfo: [],
-          trayStatus: '',
-          isLock: ''
-        },
-        {
-          id: 3,
-          queueName: '分拣口2',
-          trayInfo: [],
-          trayStatus: '',
-          isLock: ''
-        },
-        {
-          id: 4,
-          queueName: '分拣口3',
-          trayInfo: [],
-          trayStatus: '',
-          isLock: ''
-        },
-        {
-          id: 5,
-          queueName: '分拣口4',
-          trayInfo: [],
-          trayStatus: '',
-          isLock: ''
-        },
-        {
-          id: 6,
-          queueName: '分拣口5',
-          trayInfo: [],
-          trayStatus: '',
-          isLock: ''
-        },
-        {
-          id: 7,
-          queueName: '分拣口6',
-          trayInfo: [],
-          trayStatus: '',
-          isLock: ''
-        },
-        {
-          id: 8,
-          queueName: '分拣口7',
-          trayInfo: [],
-          trayStatus: '',
-          isLock: ''
-        },
-        {
-          id: 9,
-          queueName: '分拣口8',
-          trayInfo: [],
-          trayStatus: '',
-          isLock: ''
-        },
-        {
-          id: 10,
-          queueName: '分拣口9',
-          trayInfo: [],
-          trayStatus: '',
-          isLock: ''
-        },
-        {
-          id: 11,
-          queueName: '分拣口10',
-          trayInfo: [],
-          trayStatus: '',
-          isLock: ''
-        },
-        {
-          id: 12,
-          queueName: '分拣口11',
-          trayInfo: [],
-          trayStatus: '',
-          isLock: ''
-        },
-        {
-          id: 13,
-          queueName: '分拣口12',
-          trayInfo: [],
-          trayStatus: '',
-          isLock: ''
         }
       ],
       // 添加队列位置标识数据
-      queueMarkers: [
-        { id: 1, name: '上货队列', queueId: 1, x: 650, y: 780 },
-        { id: 2, name: '分拣口1', queueId: 2, x: 1730, y: 1650 },
-        { id: 3, name: '分拣口2', queueId: 3, x: 1730, y: 1020 },
-        { id: 4, name: '分拣口3', queueId: 4, x: 1910, y: 1650 },
-        { id: 5, name: '分拣口4', queueId: 5, x: 1910, y: 1020 },
-        { id: 6, name: '分拣口5', queueId: 6, x: 2090, y: 1650 },
-        { id: 7, name: '分拣口6', queueId: 7, x: 2090, y: 1020 },
-        { id: 8, name: '分拣口7', queueId: 8, x: 2280, y: 1650 },
-        { id: 9, name: '分拣口8', queueId: 9, x: 2280, y: 1020 },
-        { id: 10, name: '分拣口9', queueId: 10, x: 2470, y: 1650 },
-        { id: 11, name: '分拣口10', queueId: 11, x: 2470, y: 1020 },
-        { id: 12, name: '分拣口11', queueId: 12, x: 2650, y: 1650 },
-        { id: 13, name: '分拣口12', queueId: 13, x: 2650, y: 1020 }
-      ],
+      queueMarkers: [{ id: 1, name: '队列示例', queueId: 1, x: 650, y: 780 }],
       // 输送线流动箭头配置（坐标按平面图调整）
       conveyorArrows: [
         {
@@ -1794,200 +506,17 @@ export default {
           width: 200,
           rotation: -2,
           arrowCount: 6
-        },
-        {
-          x: 661,
-          y: 510,
-          width: 300,
-          rotation: 92,
-          arrowCount: 8
-        },
-        {
-          x: 642,
-          y: 1085,
-          width: 300,
-          rotation: 92,
-          arrowCount: 9
-        },
-        {
-          x: 800,
-          y: 1345,
-          width: 130,
-          rotation: -2,
-          arrowCount: 4
-        },
-        {
-          x: 1420,
-          y: 1343,
-          width: 250,
-          rotation: 0,
-          arrowCount: 8
-        },
-        {
-          x: 1920,
-          y: 1345,
-          width: 350,
-          rotation: 0,
-          arrowCount: 10
-        },
-        {
-          x: 2450,
-          y: 1345,
-          width: 350,
-          rotation: 0,
-          arrowCount: 10
         }
       ],
       logId: 1000, // 添加一个日志ID计数器
-      // —— 读取点位（与 读取点位.csv / background.js 一致）——
-      conveyorHeartbeat: 0, // DBW0 输送线看门狗心跳
-      conveyorRunStatus: 0, // DBW2 输送线当前运行状态
-      // DBW4 区域报警
-      areaAlarm: {
-        bit0: '0',
-        bit1: '0',
-        bit2: '0',
-        bit3: '0',
-        bit4: '0',
-        bit5: '0',
-        bit6: '0',
-        bit7: '0',
-        bit8: '0',
-        bit9: '0',
-        bit10: '0',
-        bit11: '0',
-        bit12: '0',
-        bit13: '0',
-        bit14: '0',
-        bit15: '0'
+      // DBW12 光电信号--1
+      photoelectricSignal: {
+        bit0: '0'
       },
       // DBW6 电机运行信号 01001-01016
-      motorRunningWord6: {
-        bit0: '0',
-        bit1: '0',
-        bit2: '0',
-        bit3: '0',
-        bit4: '0',
-        bit5: '0',
-        bit6: '0',
-        bit7: '0',
-        bit8: '0',
-        bit9: '0',
-        bit10: '0',
-        bit11: '0',
-        bit12: '0',
-        bit13: '0',
-        bit14: '0',
-        bit15: '0'
+      motorRunning: {
+        bit0: '0'
       },
-      // DBW8 电机运行信号 01017-01030
-      motorRunningWord8: {
-        bit0: '0',
-        bit1: '0',
-        bit2: '0',
-        bit3: '0',
-        bit4: '0',
-        bit5: '0',
-        bit6: '0',
-        bit7: '0',
-        bit8: '0',
-        bit9: '0',
-        bit10: '0',
-        bit11: '0',
-        bit12: '0',
-        bit13: '0',
-        bit14: '0',
-        bit15: '0'
-      },
-      // DBW10 分拣机左右执行
-      motorRunningWord10: {
-        bit0: '0',
-        bit1: '0',
-        bit2: '0',
-        bit3: '0',
-        bit4: '0',
-        bit5: '0',
-        bit6: '0',
-        bit7: '0',
-        bit8: '0',
-        bit9: '0',
-        bit10: '0',
-        bit11: '0'
-      },
-      // DBW12 光电信号--1
-      photoelectricSignal1: {
-        bit0: '0',
-        bit1: '0',
-        bit2: '0',
-        bit3: '0',
-        bit4: '0',
-        bit5: '0',
-        bit6: '0',
-        bit7: '0',
-        bit8: '0',
-        bit9: '0',
-        bit10: '0',
-        bit11: '0',
-        bit12: '0',
-        bit13: '0',
-        bit14: '0',
-        bit15: '0'
-      },
-      // DBW14 光电信号--2
-      photoelectricSignal2: {
-        bit0: '0',
-        bit1: '0',
-        bit2: '0',
-        bit3: '0',
-        bit4: '0',
-        bit5: '0',
-        bit6: '0',
-        bit7: '0',
-        bit8: '0',
-        bit9: '0',
-        bit10: '0',
-        bit11: '0',
-        bit12: '0',
-        bit13: '0',
-        bit14: '0',
-        bit15: '0'
-      },
-      // DBW16 对接WCS信号
-      wcsDockWord16: {
-        bit0: '0',
-        bit1: '0',
-        bit2: '0',
-        bit3: '0',
-        bit4: '0',
-        bit5: '0',
-        bit6: '0',
-        bit7: '0',
-        bit8: '0',
-        bit9: '0',
-        bit10: '0',
-        bit11: '0',
-        bit12: '0',
-        bit13: '0',
-        bit14: '0',
-        bit15: '0'
-      },
-      // PLC分拣口计数（DBW1224~DBW1246，对应分拣口1~12）
-      sortPortPlcCounts: {
-        1: 0,
-        2: 0,
-        3: 0,
-        4: 0,
-        5: 0,
-        6: 0,
-        7: 0,
-        8: 0,
-        9: 0,
-        10: 0,
-        11: 0,
-        12: 0
-      },
-      // AGV/MCS轮询定时器
-      mcsPollingTimer: null,
       // 数据准备就绪标志位
       isDataReady: false
     };
@@ -2005,110 +534,8 @@ export default {
       return this.queues[this.selectedQueueIndex];
     }
   },
-  watch: {
-    // —— 分拣机前光电上升沿：01015~01020 对应分拣机1~6 ——
-    'photoelectricSignal1.bit14'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      if (newVal === '1' && oldVal === '0') this.handleSorterPhotoTrigger(1);
-    },
-    'photoelectricSignal1.bit15'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      if (newVal === '1' && oldVal === '0') this.handleSorterPhotoTrigger(2);
-    },
-    'photoelectricSignal2.bit0'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      if (newVal === '1' && oldVal === '0') this.handleSorterPhotoTrigger(3);
-    },
-    'photoelectricSignal2.bit1'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      if (newVal === '1' && oldVal === '0') this.handleSorterPhotoTrigger(4);
-    },
-    'photoelectricSignal2.bit2'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      if (newVal === '1' && oldVal === '0') this.handleSorterPhotoTrigger(5);
-    },
-    'photoelectricSignal2.bit3'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      if (newVal === '1' && oldVal === '0') this.handleSorterPhotoTrigger(6);
-    },
-    // —— X光机：DBW16.BIT1（01013光电）下降沿后检查 BIT0 剔除信号 ——
-    'wcsDockWord16.bit1'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      if (newVal === '0' && oldVal === '1') this.handleXrayRejectTrigger();
-    },
-    // —— 读码上货触发：DBW1252 上升沿（0 -> 非0）取当前五面扫条码进队 ——
-    uploadTriggerSignal(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      // 上升沿检测：0 -> 非0 表示PLC触发读码上货
-      if (newVal !== 0 && oldVal === 0) {
-        this.addLog('收到读码上货触发信号（DBW1252上升沿）', 'running');
-        // 限流：2秒内重复请求不处理（参照历史目的地请求信号限流）
-        const now = Date.now();
-        if (now - this.lastUploadTriggerTime < 2000) {
-          this.addLog('读码上货触发信号限流：2秒内重复触发，已忽略', 'alarm');
-          return;
-        }
-        this.lastUploadTriggerTime = now;
-        this.handleUploadTrigger();
-      }
-    },
-    // —— 分拣口PLC计数增量：计数增加时把已发命令货物从上货队列移入分拣口 ——
-    'sortPortPlcCounts.1'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      this.handleSortPortCountChange(1, newVal, oldVal);
-    },
-    'sortPortPlcCounts.2'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      this.handleSortPortCountChange(2, newVal, oldVal);
-    },
-    'sortPortPlcCounts.3'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      this.handleSortPortCountChange(3, newVal, oldVal);
-    },
-    'sortPortPlcCounts.4'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      this.handleSortPortCountChange(4, newVal, oldVal);
-    },
-    'sortPortPlcCounts.5'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      this.handleSortPortCountChange(5, newVal, oldVal);
-    },
-    'sortPortPlcCounts.6'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      this.handleSortPortCountChange(6, newVal, oldVal);
-    },
-    'sortPortPlcCounts.7'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      this.handleSortPortCountChange(7, newVal, oldVal);
-    },
-    'sortPortPlcCounts.8'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      this.handleSortPortCountChange(8, newVal, oldVal);
-    },
-    'sortPortPlcCounts.9'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      this.handleSortPortCountChange(9, newVal, oldVal);
-    },
-    'sortPortPlcCounts.10'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      this.handleSortPortCountChange(10, newVal, oldVal);
-    },
-    'sortPortPlcCounts.11'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      this.handleSortPortCountChange(11, newVal, oldVal);
-    },
-    'sortPortPlcCounts.12'(newVal, oldVal) {
-      if (!this.isDataReady) return;
-      this.handleSortPortCountChange(12, newVal, oldVal);
-    }
-  },
   mounted() {
     this.initializeMarkers();
-    this.loadBizConfig();
-    this._onReFlushConfig = () => {
-      this.loadBizConfig();
-    };
-    EventBus.$on('reFlushConfig', this._onReFlushConfig);
     this.loadQueueInfoFromDatabase();
     // 数据加载完成后创建监听（跳过 id 为 1-5 的队列）
     this._queueWatchers = []; // 保存 watcher 取消函数
@@ -2116,7 +543,7 @@ export default {
     this.$nextTick(() => {
       this.queues.forEach((queue, index) => {
         const unwatch = this.$watch(`queues.${index}`, {
-          handler(newVal, oldVal) {
+          handler() {
             if (!this._queueInitDone) return;
             this.updateQueueInfo(queue.id);
           },
@@ -2125,1191 +552,33 @@ export default {
         this._queueWatchers.push(unwatch);
       });
     });
-    // 启动 MCS/AGV 队列状态轮询
-    this.startMcsPolling();
-    // 启动上货队列超时清理轮询（500ms）
-    this.startUploadQueueCleaner();
-    // 六面扫TCP直连（不再通过background.js中转）
-    this.connectSixScan();
     // 保存监听器引用，以便组件销毁时移除，避免重复注册和内存泄漏
-    this.receivedMsgHandler = (event, values, values2) => {
-      const getBit = (word, bitIndex) => ((word >> bitIndex) & 1).toString();
-
-      // 基础状态
-      this.conveyorHeartbeat = Number(values.DBW0 ?? 0);
-      this.conveyorRunStatus = Number(values.DBW2 ?? 0);
-
-      // DBW4 区域报警
-      let word4 = this.convertToWord(values.DBW4 ?? 0);
-      this.areaAlarm.bit0 = getBit(word4, 8);
-      this.areaAlarm.bit1 = getBit(word4, 9);
-      this.areaAlarm.bit2 = getBit(word4, 10);
-      this.areaAlarm.bit3 = getBit(word4, 11);
-      this.areaAlarm.bit4 = getBit(word4, 12);
-      this.areaAlarm.bit5 = getBit(word4, 13);
-      this.areaAlarm.bit6 = getBit(word4, 14);
-      this.areaAlarm.bit7 = getBit(word4, 15);
-      this.areaAlarm.bit8 = getBit(word4, 0);
-      this.areaAlarm.bit9 = getBit(word4, 1);
-      this.areaAlarm.bit10 = getBit(word4, 2);
-      this.areaAlarm.bit11 = getBit(word4, 3);
-      this.areaAlarm.bit12 = getBit(word4, 4);
-      this.areaAlarm.bit13 = getBit(word4, 5);
-      this.areaAlarm.bit14 = getBit(word4, 6);
-      this.areaAlarm.bit15 = getBit(word4, 7);
-
-      // DBW6 电机运行信号 01001-01016
-      let word6 = this.convertToWord(values.DBW6 ?? 0);
-      this.motorRunningWord6.bit0 = getBit(word6, 8);
-      this.motorRunningWord6.bit1 = getBit(word6, 9);
-      this.motorRunningWord6.bit2 = getBit(word6, 10);
-      this.motorRunningWord6.bit3 = getBit(word6, 11);
-      this.motorRunningWord6.bit4 = getBit(word6, 12);
-      this.motorRunningWord6.bit5 = getBit(word6, 13);
-      this.motorRunningWord6.bit6 = getBit(word6, 14);
-      this.motorRunningWord6.bit7 = getBit(word6, 15);
-      this.motorRunningWord6.bit8 = getBit(word6, 0);
-      this.motorRunningWord6.bit9 = getBit(word6, 1);
-      this.motorRunningWord6.bit10 = getBit(word6, 2);
-      this.motorRunningWord6.bit11 = getBit(word6, 3);
-      this.motorRunningWord6.bit12 = getBit(word6, 4);
-      this.motorRunningWord6.bit13 = getBit(word6, 5);
-      this.motorRunningWord6.bit14 = getBit(word6, 6);
-      this.motorRunningWord6.bit15 = getBit(word6, 7);
-
-      // DBW8 电机运行信号 01017-01030
-      let word8 = this.convertToWord(values.DBW8 ?? 0);
-      this.motorRunningWord8.bit0 = getBit(word8, 8);
-      this.motorRunningWord8.bit1 = getBit(word8, 9);
-      this.motorRunningWord8.bit2 = getBit(word8, 10);
-      this.motorRunningWord8.bit3 = getBit(word8, 11);
-      this.motorRunningWord8.bit4 = getBit(word8, 12);
-      this.motorRunningWord8.bit5 = getBit(word8, 13);
-      this.motorRunningWord8.bit6 = getBit(word8, 14);
-      this.motorRunningWord8.bit7 = getBit(word8, 15);
-      this.motorRunningWord8.bit8 = getBit(word8, 0);
-      this.motorRunningWord8.bit9 = getBit(word8, 1);
-      this.motorRunningWord8.bit10 = getBit(word8, 2);
-      this.motorRunningWord8.bit11 = getBit(word8, 3);
-      this.motorRunningWord8.bit12 = getBit(word8, 4);
-      this.motorRunningWord8.bit13 = getBit(word8, 5);
-      this.motorRunningWord8.bit14 = getBit(word8, 6);
-      this.motorRunningWord8.bit15 = getBit(word8, 7);
-
-      // DBW10 分拣机左右执行
-      let word10 = this.convertToWord(values.DBW10 ?? 0);
-      this.motorRunningWord10.bit0 = getBit(word10, 8);
-      this.motorRunningWord10.bit1 = getBit(word10, 9);
-      this.motorRunningWord10.bit2 = getBit(word10, 10);
-      this.motorRunningWord10.bit3 = getBit(word10, 11);
-      this.motorRunningWord10.bit4 = getBit(word10, 12);
-      this.motorRunningWord10.bit5 = getBit(word10, 13);
-      this.motorRunningWord10.bit6 = getBit(word10, 14);
-      this.motorRunningWord10.bit7 = getBit(word10, 15);
-      this.motorRunningWord10.bit8 = getBit(word10, 0);
-      this.motorRunningWord10.bit9 = getBit(word10, 1);
-      this.motorRunningWord10.bit10 = getBit(word10, 2);
-      this.motorRunningWord10.bit11 = getBit(word10, 3);
-
-      // DBW12 光电信号--1
-      let word12 = this.convertToWord(values.DBW12 ?? 0);
-      this.photoelectricSignal1.bit0 = getBit(word12, 8);
-      this.photoelectricSignal1.bit1 = getBit(word12, 9);
-      this.photoelectricSignal1.bit2 = getBit(word12, 10);
-      this.photoelectricSignal1.bit3 = getBit(word12, 11);
-      this.photoelectricSignal1.bit4 = getBit(word12, 12);
-      this.photoelectricSignal1.bit5 = getBit(word12, 13);
-      this.photoelectricSignal1.bit6 = getBit(word12, 14);
-      this.photoelectricSignal1.bit7 = getBit(word12, 15);
-      this.photoelectricSignal1.bit8 = getBit(word12, 0);
-      this.photoelectricSignal1.bit9 = getBit(word12, 1);
-      this.photoelectricSignal1.bit10 = getBit(word12, 2);
-      this.photoelectricSignal1.bit11 = getBit(word12, 3);
-      this.photoelectricSignal1.bit12 = getBit(word12, 4);
-      this.photoelectricSignal1.bit13 = getBit(word12, 5);
-      this.photoelectricSignal1.bit14 = getBit(word12, 6);
-      this.photoelectricSignal1.bit15 = getBit(word12, 7);
-
-      // DBW14 光电信号--2
-      let word14 = this.convertToWord(values.DBW14 ?? 0);
-      this.photoelectricSignal2.bit0 = getBit(word14, 8);
-      this.photoelectricSignal2.bit1 = getBit(word14, 9);
-      this.photoelectricSignal2.bit2 = getBit(word14, 10);
-      this.photoelectricSignal2.bit3 = getBit(word14, 11);
-      this.photoelectricSignal2.bit4 = getBit(word14, 12);
-      this.photoelectricSignal2.bit5 = getBit(word14, 13);
-      this.photoelectricSignal2.bit6 = getBit(word14, 14);
-      this.photoelectricSignal2.bit7 = getBit(word14, 15);
-      this.photoelectricSignal2.bit8 = getBit(word14, 0);
-      this.photoelectricSignal2.bit9 = getBit(word14, 1);
-      this.photoelectricSignal2.bit10 = getBit(word14, 2);
-      this.photoelectricSignal2.bit11 = getBit(word14, 3);
-      this.photoelectricSignal2.bit12 = getBit(word14, 4);
-      this.photoelectricSignal2.bit13 = getBit(word14, 5);
-      this.photoelectricSignal2.bit14 = getBit(word14, 6);
-      this.photoelectricSignal2.bit15 = getBit(word14, 7);
-
-      // DBW16 对接WCS信号
-      let word16 = this.convertToWord(values.DBW16 ?? 0);
-      this.wcsDockWord16.bit0 = getBit(word16, 8);
-      this.wcsDockWord16.bit1 = getBit(word16, 9);
-      this.wcsDockWord16.bit2 = getBit(word16, 10);
-      this.wcsDockWord16.bit3 = getBit(word16, 11);
-      this.wcsDockWord16.bit4 = getBit(word16, 12);
-      this.wcsDockWord16.bit5 = getBit(word16, 13);
-      this.wcsDockWord16.bit6 = getBit(word16, 14);
-      this.wcsDockWord16.bit7 = getBit(word16, 15);
-      this.wcsDockWord16.bit8 = getBit(word16, 0);
-      this.wcsDockWord16.bit9 = getBit(word16, 1);
-      this.wcsDockWord16.bit10 = getBit(word16, 2);
-      this.wcsDockWord16.bit11 = getBit(word16, 3);
-      this.wcsDockWord16.bit12 = getBit(word16, 4);
-      this.wcsDockWord16.bit13 = getBit(word16, 5);
-      this.wcsDockWord16.bit14 = getBit(word16, 6);
-      this.wcsDockWord16.bit15 = getBit(word16, 7);
-
-      // 分拣口计数（DBW1224~DBW1246）
-      this.sortPortPlcCounts[1] = Number(values.DBW1224 ?? 0);
-      this.sortPortPlcCounts[2] = Number(values.DBW1226 ?? 0);
-      this.sortPortPlcCounts[3] = Number(values.DBW1228 ?? 0);
-      this.sortPortPlcCounts[4] = Number(values.DBW1230 ?? 0);
-      this.sortPortPlcCounts[5] = Number(values.DBW1232 ?? 0);
-      this.sortPortPlcCounts[6] = Number(values.DBW1234 ?? 0);
-      this.sortPortPlcCounts[7] = Number(values.DBW1236 ?? 0);
-      this.sortPortPlcCounts[8] = Number(values.DBW1238 ?? 0);
-      this.sortPortPlcCounts[9] = Number(values.DBW1240 ?? 0);
-      this.sortPortPlcCounts[10] = Number(values.DBW1242 ?? 0);
-      this.sortPortPlcCounts[11] = Number(values.DBW1244 ?? 0);
-      this.sortPortPlcCounts[12] = Number(values.DBW1246 ?? 0);
-      // 读码上货触发信号（DBW1252）
-      this.uploadTriggerSignal = Number(values.DBW1252 ?? 0);
+    this.receivedMsgHandler = (event, values) => {
+      // 新项目在此按点位表赋值，例如：
+      // const getBit = (word, bitIndex) => ((word >> bitIndex) & 1).toString();
+      // const photoWord = this.convertToWord(values.DBWxx ?? 0);
+      // this.photoelectricSignal.bit0 = getBit(photoWord, 0);
+      // const motorWord = this.convertToWord(values.DBWyy ?? 0);
+      // this.motorRunning.bit0 = getBit(motorWord, 0);
+      void event;
+      void values;
     };
     ipcRenderer.on('receivedMsg', this.receivedMsgHandler);
     // 给PLC数据加载时间
-    setTimeout(() => {
+    this._dataReadyTimer = setTimeout(() => {
       this.addLog('isDataReady数据加载完成');
       this.isDataReady = true;
     }, 3000);
   },
   methods: {
-    applyBizConfig(cfg) {
-      if (!cfg) return;
-      const toMs = (sec) => {
-        if (sec === null || sec === undefined || sec === '') return null;
-        const n = Number(sec);
-        return Number.isFinite(n) ? n * 1000 : null;
-      };
-      const toInt = (val) => {
-        if (val === null || val === undefined || val === '') return null;
-        const n = Number(val);
-        return Number.isFinite(n) ? n : null;
-      };
-      const arrivalMs = toMs(cfg.arrivalToleranceSec);
-      if (arrivalMs != null) {
-        this.sorterArrivalTolerance = arrivalMs;
-      }
-      const arrivalNegMs = toMs(cfg.speedTwo);
-      if (arrivalNegMs != null) {
-        this.sorterArrivalToleranceNeg = arrivalNegMs;
-      }
-      const notEnteredMs = toMs(cfg.notEnteredTimeoutSec);
-      if (notEnteredMs != null) {
-        this.cmdSentTimeoutMs = notEnteredMs;
-      }
-      const cmdNotSentMs = toMs(cfg.cmdNotSentTimeoutSec);
-      if (cmdNotSentMs != null) {
-        this.cmdNotSentOverdueMs = cmdNotSentMs;
-      }
-      const largeCap = toInt(cfg.largePortCapacity);
-      if (largeCap != null) {
-        this.largePortCapacity = largeCap;
-      }
-      const smallCap = toInt(cfg.smallPortCapacity);
-      if (smallCap != null) {
-        this.smallPortCapacity = smallCap;
-      }
-      const sorter1Ms = toMs(cfg.sorter1TravelSec);
-      if (sorter1Ms != null) {
-        this.sorterTravelTimes[1] = sorter1Ms;
-      }
-      const sorter2Ms = toMs(cfg.sorter2TravelSec);
-      if (sorter2Ms != null) {
-        this.sorterTravelTimes[2] = sorter2Ms;
-      }
-      const sorter3Ms = toMs(cfg.sorter3TravelSec);
-      if (sorter3Ms != null) {
-        this.sorterTravelTimes[3] = sorter3Ms;
-      }
-      const sorter4Ms = toMs(cfg.sorter4TravelSec);
-      if (sorter4Ms != null) {
-        this.sorterTravelTimes[4] = sorter4Ms;
-      }
-      const sorter5Ms = toMs(cfg.sorter5TravelSec);
-      if (sorter5Ms != null) {
-        this.sorterTravelTimes[5] = sorter5Ms;
-      }
-      const sorter6Ms = toMs(cfg.sorter6TravelSec);
-      if (sorter6Ms != null) {
-        this.sorterTravelTimes[6] = sorter6Ms;
-      }
-      const xrayMs = toMs(cfg.xrayTravelSec);
-      if (xrayMs != null) {
-        this.xrayTravelTime = xrayMs;
-      }
-    },
-    loadBizConfig() {
-      HttpUtil.get('/cssConfig/getConfig')
-        .then((res) => {
-          this.applyBizConfig(res.data);
-          this.addLog(
-            `业务配置已刷新：光电误差+${this.sorterArrivalTolerance}/-${this.sorterArrivalToleranceNeg}ms，未进口清理${this.cmdSentTimeoutMs}ms，未发命令清理${this.cmdNotSentOverdueMs}ms，行进时长分拣机${this.sorterTravelTimes[1]}/${this.sorterTravelTimes[2]}/${this.sorterTravelTimes[3]}/${this.sorterTravelTimes[4]}/${this.sorterTravelTimes[5]}/${this.sorterTravelTimes[6]}ms、X光机${this.xrayTravelTime}ms，大包容量${this.largePortCapacity}，小包容量${this.smallPortCapacity}`
-          );
-        })
-        .catch((err) => {
-          console.log('biz config load error!', err);
-        });
-    },
     // 获取队列托盘数量
     getQueueTrayCount(queueId) {
-      const queue = this.queues.find((q) => q.id === queueId);
+      const queue = this.queues.find((item) => item.id === queueId);
       return queue?.trayInfo?.length || 0;
     },
-    // 判断是否为分拣口队列（queueId 2~13 对应分拣口 1~12）
-    isSortPortQueue(queueId) {
-      return queueId >= 2 && queueId <= 13;
-    },
-    // 获取分拣口PLC计数
-    getSortPortPlcCount(queueId) {
-      return this.sortPortPlcCounts[queueId - 1] || 0;
-    },
-    // 六面扫TCP直连（在渲染进程直接建立Socket，不通过background.js中转）
-    connectSixScan() {
-      this._sixScanDestroyed = false;
-      this._doConnectSixScan();
-    },
-    _doConnectSixScan() {
-      if (this._sixScanDestroyed) return;
-      // 先清除已有的重连定时器，防止多个定时器并存
-      if (this._sixScanReconnectTimer) {
-        clearTimeout(this._sixScanReconnectTimer);
-        this._sixScanReconnectTimer = null;
-      }
-      // 先解绑旧socket所有事件监听，再销毁，防止旧close回调异步污染新连接
-      if (this._sixScanSocket) {
-        const oldSocket = this._sixScanSocket;
-        this._sixScanSocket = null; // 先置空，避免旧close回调覆盖
-        oldSocket.removeAllListeners();
-        oldSocket.destroy();
-      }
-      const socket = new net.Socket();
-      socket.setEncoding('utf8');
-
-      socket.on('connect', () => {
-        this.sixScanSocketConnected = true;
-        socket.setKeepAlive(true, 60000);
-        this.addLog(`六面扫Socket已连接 ${SIX_SCAN_HOST}:${SIX_SCAN_PORT}`);
-        // 清除重连定时器
-        if (this._sixScanReconnectTimer) {
-          clearTimeout(this._sixScanReconnectTimer);
-          this._sixScanReconnectTimer = null;
-        }
-      });
-
-      socket.on('data', (data) => {
-        try {
-          const barcodeStr = (data || '').toString().trim();
-          if (barcodeStr) {
-            this.addLog(`六面扫收到数据: ${barcodeStr}`);
-            this.handleSixScanSocketData(barcodeStr);
-          }
-        } catch (e) {
-          this.addLog(`六面扫数据解析异常: ${e.message}`, 'alarm');
-        }
-      });
-
-      socket.on('close', () => {
-        this.sixScanSocketConnected = false;
-        // 只有当前socket才是触发源，防止旧socket的close回调污染新引用
-        if (this._sixScanSocket === socket) {
-          this._sixScanSocket = null;
-        }
-        if (!this._sixScanDestroyed) {
-          this.addLog('六面扫Socket连接断开，准备重连', 'alarm');
-          this._sixScanReconnectTimer = setTimeout(() => {
-            this._doConnectSixScan();
-          }, SIX_SCAN_RECONNECT_DELAY);
-        }
-      });
-
-      socket.on('error', (err) => {
-        this.addLog(`六面扫连接错误: ${err.message}`, 'alarm');
-        this.sixScanSocketConnected = false;
-      });
-
-      this._sixScanSocket = socket;
-      try {
-        socket.connect(SIX_SCAN_PORT, SIX_SCAN_HOST);
-      } catch (e) {
-        this.addLog(`六面扫首次连接异常: ${e.message}`, 'alarm');
-      }
-    },
-    // 断开六面扫Socket，清理资源
-    disconnectSixScan() {
-      this._sixScanDestroyed = true;
-      if (this._sixScanReconnectTimer) {
-        clearTimeout(this._sixScanReconnectTimer);
-        this._sixScanReconnectTimer = null;
-      }
-      if (this._sixScanSocket) {
-        this._sixScanSocket.removeAllListeners();
-        this._sixScanSocket.destroy();
-        this._sixScanSocket = null;
-      }
-    },
-    // 处理五面扫Socket发来的条码数据：只赋值缓存，等DBW1252上升沿触发再进队
-    handleSixScanSocketData(rawBarcode) {
-      const rawStr = (rawBarcode || '').trim();
-      // 始终显示原始数据到面板（去掉首尾方括号）
-      this.lastProcessedBarcode = rawStr.replace(/^\[|\]$/g, '');
-
-      // 多码格式预检：[xxxx][xxxx]（含多个方括号段）保留原始串，由进队逻辑按异常处理
-      const bracketSegments = rawStr.match(/\[[^\]]*\]/g);
-      if (bracketSegments && bracketSegments.length >= 2) {
-        this.sixScanBarcode = rawStr;
-        this.addLog(`五面扫条码已赋值（多码）：${rawStr}，等待上货触发信号`);
-        return;
-      }
-
-      // 单码：提取方括号内容后赋值缓存
-      let innerContent = rawStr;
-      if (rawStr.startsWith('[') && rawStr.endsWith(']')) {
-        innerContent = rawStr.slice(1, -1);
-      }
-      this.sixScanBarcode = innerContent.trim();
-      this.addLog(`五面扫条码已赋值：${this.sixScanBarcode}，等待上货触发信号`);
-    },
-    // 读码上货触发入口（DBW1252上升沿触发）：拿当前赋值的五面扫条码走上货流程
-    handleUploadTrigger() {
-      const code = (this.sixScanBarcode || '').trim();
-      if (!code) {
-        // 触发了上货信号但五面扫无条码数据，属异常：发剔除命令不进队
-        this.rejectScanNotEnqueue('收到上货触发信号，但当前无条码数据');
-        return;
-      }
-      this.addLog(`读码上货触发，取当前条码进队：${code}`);
-      this.handleScanEnqueue(code);
-    },
-    // 扫码进队入口：DBW1252上升沿触发时拿当前五面扫条码进入上货队列
-    // 正常条码走分配分拣口流程；NoRead/多码/重复码/菜鸟失败/分配失败不进队，给PLC发剔除命令
-    async handleScanEnqueue(barcode) {
-      const code = (barcode || '').trim();
-      if (!code) return;
-
-      // NoRead / 多码：不进上货队列，发剔除命令
-      const isNoRead = code.indexOf('NoRead') !== -1;
-      const isCommaMulti = code.split(',').length > 1;
-      const bracketMatches = code.match(/\[[^\]]*\]/g);
-      const isBracketMulti = bracketMatches && bracketMatches.length >= 2;
-      if (isNoRead || isCommaMulti || isBracketMulti) {
-        const reason = isNoRead ? '五面扫未读到条码' : '五面扫读到多码';
-        this.rejectScanNotEnqueue(`${reason}（${code}）`);
-        return;
-      }
-
-      // 上货队列已有同条码则剔除、不进队
-      const uploadQueue = this.queues[0];
-      const isDuplicate = (uploadQueue.trayInfo || []).some(
-        (item) => (item.packageNo || '').trim() === code
-      );
-      if (isDuplicate) {
-        this.rejectScanNotEnqueue(`条码重复，上货队列已存在同条码（${code}）`);
-        return;
-      }
-
-      // 正常条码：查包裹信息（停用菜鸟走 mock，否则查菜鸟接口）
-      const packageInfo = await this.resolvePackageInfo(code);
-      if (!packageInfo) {
-        this.rejectScanNotEnqueue(`菜鸟大包查询失败（条码 ${code}）`);
-        return;
-      }
-      this.nowScanTrayInfo = packageInfo;
-      const packageSize = packageInfo.packageSize;
-      try {
-        // 1. 分配分拣口（1~11循环；同口仅允许同渠道、同大小包裹）
-        // 分配失败：不进上货队列，发剔除命令（12口只进X光机剔除件）
-        const port = this.allocateSortPort(packageSize, packageInfo.channel);
-        if (!port) {
-          this.rejectScanNotEnqueue(
-            `无法分配分拣口（渠道 ${packageInfo.channel || '--'}，${
-              packageSize === 'large' ? '大包' : '小包'
-            }，条码 ${code}）`
-          );
-          return;
-        }
-
-        // 2. 保存订单到 order_info
-        const payload = toOrderInfoPayload(packageInfo);
-        const res = await HttpUtil.post('/order_info/save', payload);
-        const savedOrder = res && res.data;
-        if (!savedOrder || savedOrder.id == null) {
-          throw new Error((res && res.message) || '保存订单失败');
-        }
-
-        // 3. 构建队列项，加入上货队列（queues[0]），记录进队时间
-        const queueItem = {
-          orderInfoId: savedOrder.id,
-          packageNo: packageInfo.packageNo,
-          trayTime: moment().format('YYYY-MM-DD HH:mm:ss'),
-          channel: packageInfo.channel,
-          packageSize: packageInfo.packageSize, // 记录包裹大小，用于分拣口同大小约束判断
-          packingWeight: packageInfo.packingWeight,
-          expectedQty: packageInfo.expectedQty,
-          trayStatus: '1',
-          allocatedPortNo: port.portNo, // 分配的分拣口号
-          machineNo: port.machineNo, // 分拣口对应的分拣机编号
-          direction: port.direction, // 分拣方向：1左转（偶数口）2右转（奇数口）
-          enqueueTs: Date.now(), // 进队时间戳（用于光电到达时间匹配）
-          cmdSent: false, // 是否已发送转向命令
-          cmdSentTs: null // 转向命令发送时间戳
-        };
-        this.queues[0].trayInfo.push(queueItem);
-
-        if (this.selectedQueueIndex === 0) {
-          this.showTrays(0);
-        }
-
-        this.addLog(
-          `扫码进队完成，大包号：${packageInfo.packageNo}（${
-            packageSize === 'large' ? '大包' : '小包'
-          }），已分配分拣口${port.portNo}（分拣机${port.machineNo}，${
-            port.direction === 1 ? '左转' : '右转'
-          }），上货队列当前 ${this.queues[0].trayInfo.length} 件`
-        );
-        this.$message.success(
-          `大包 ${packageInfo.packageNo} 已分配至分拣口${port.portNo}`
-        );
-      } catch (error) {
-        console.error('扫码进队处理失败:', error);
-        this.$message.error(`扫码进队处理失败：${error.message || '请重试'}`);
-        this.rejectScanNotEnqueue(
-          `扫码进队处理失败，条码：${code}，原因：${error.message || '请重试'}`
-        );
-      }
-    },
-    // 不进上货队列：给PLC发剔除命令 DBW118=1，保持500ms后取消
-    rejectScanNotEnqueue(reason) {
-      const cmdAdd = 'W_DBW118';
-      ipcRenderer.send('writeSingleValueToPLC', cmdAdd, 1);
-      if (this._plcRejectCancelTimer) {
-        clearTimeout(this._plcRejectCancelTimer);
-      }
-      this._plcRejectCancelTimer = setTimeout(() => {
-        ipcRenderer.send('cancelWriteToPLC', cmdAdd);
-        this._plcRejectCancelTimer = null;
-      }, 500);
-      this.addLog(
-        `${reason}，不进入上货队列，已发剔除命令 ${cmdAdd}=1（保持500ms）`,
-        'alarm'
-      );
-    },
-    // 分拣机前光电触发：按进队时间+固定行进时长匹配应到达货物，发转向命令
-    handleSorterPhotoTrigger(machineNo) {
-      const now = Date.now();
-      const travelTime = this.sorterTravelTimes[machineNo];
-      if (!travelTime) return;
-      const uploadQueue = this.queues[0];
-      // 在上货队列中找应到达时间误差在窗口内、且未发过命令的货物（取偏差绝对值最小者）
-      // dev>0：光电触发晚于应到达时刻（货物早到）；dev<0：货物晚到
-      let matched = null;
-      let matchedDev = Infinity;
-      uploadQueue.trayInfo.forEach((item) => {
-        if (item.cmdSent || !item.enqueueTs) return;
-        const dev = now - (item.enqueueTs + travelTime);
-        if (
-          dev >= -this.sorterArrivalToleranceNeg &&
-          dev <= this.sorterArrivalTolerance &&
-          Math.abs(dev) < Math.abs(matchedDev)
-        ) {
-          matched = item;
-          matchedDev = dev;
-        }
-      });
-      if (!matched) {
-        this.addLog(
-          `分拣机${machineNo}光电触发，-${this.sorterArrivalToleranceNeg}ms~+${this.sorterArrivalTolerance}ms窗口内未匹配到应到达的货物`
-        );
-        return;
-      }
-      if (matched.machineNo !== machineNo) {
-        this.addLog(
-          `分拣机${machineNo}光电触发，应到达货物为大包 ${matched.packageNo}（目标分拣机${matched.machineNo}/分拣口${matched.allocatedPortNo}），非本分拣机，直行通过`
-        );
-        return;
-      }
-      // 发转向命令：分拣机n对应 DBW106+2(n-1)，发1秒后取消
-      const cmdAdd = `W_DBW${104 + machineNo * 2}`;
-      ipcRenderer.send('writeSingleValueToPLC', cmdAdd, matched.direction);
-      setTimeout(() => {
-        ipcRenderer.send('cancelWriteToPLC', cmdAdd);
-      }, 1000);
-      matched.cmdSent = true;
-      matched.cmdSentTs = Date.now();
-      this.addLog(
-        `分拣机${machineNo}光电触发，大包 ${
-          matched.packageNo
-        } 到达（偏差${matchedDev}ms），已发转向命令 ${cmdAdd}=${
-          matched.direction
-        }（${matched.direction === 1 ? '左转' : '右转'}，目标分拣口${
-          matched.allocatedPortNo
-        }，1秒后取消）`
-      );
-    },
-    // X光机剔除：01013光电下降沿后，若有剔除信号，按进队+11s在正负误差窗口内匹配货物并改发12号口
-    handleXrayRejectTrigger() {
-      if (this.wcsDockWord16.bit0 !== '1') return;
-      const now = Date.now();
-      const uploadQueue = this.queues[0];
-      let matched = null;
-      let matchedDev = Infinity;
-      uploadQueue.trayInfo.forEach((item) => {
-        if (item.cmdSent || !item.enqueueTs) return;
-        const dev = now - (item.enqueueTs + this.xrayTravelTime);
-        if (
-          dev >= -this.sorterArrivalToleranceNeg &&
-          dev <= this.sorterArrivalTolerance &&
-          Math.abs(dev) < Math.abs(matchedDev)
-        ) {
-          matched = item;
-          matchedDev = dev;
-        }
-      });
-      if (!matched) {
-        this.addLog(
-          `X光机剔除信号触发，-${this.sorterArrivalToleranceNeg}ms~+${this.sorterArrivalTolerance}ms窗口内未匹配到应到达X光机的货物`,
-          'alarm'
-        );
-        return;
-      }
-      const prevPort = matched.allocatedPortNo;
-      matched.allocatedPortNo = 12;
-      matched.machineNo = 6;
-      matched.direction = 1;
-      this.addLog(
-        `X光机剔除：大包 ${matched.packageNo} 到达（偏差${matchedDev}ms），目的地由分拣口${prevPort}改为12号异常口`
-      );
-    },
-    // 启动上货队列超时清理轮询（500ms）：
-    // 1）已发转向命令超过 cmdSentTimeoutMs 仍未进分拣口 → 删除
-    // 2）到对应分拣机应到达时刻后再超时 cmdNotSentOverdueMs 仍未发转向命令 → 删除
-    startUploadQueueCleaner() {
-      this.stopUploadQueueCleaner();
-      this.uploadQueueCleanTimer = setInterval(() => {
-        const uploadQueue = this.queues[0];
-        if (!uploadQueue || !uploadQueue.trayInfo.length) return;
-        const now = Date.now();
-        let removed = 0;
-        for (let i = uploadQueue.trayInfo.length - 1; i >= 0; i--) {
-          const item = uploadQueue.trayInfo[i];
-          if (
-            item.cmdSent &&
-            item.cmdSentTs &&
-            now - item.cmdSentTs > this.cmdSentTimeoutMs
-          ) {
-            uploadQueue.trayInfo.splice(i, 1);
-            removed++;
-            this.addLog(
-              `上货队列超时清理：大包 ${item.packageNo}（目标分拣口${
-                item.allocatedPortNo
-              }）发送转向命令后${
-                now - item.cmdSentTs
-              }ms未进入分拣口，已从上货队列删除`,
-              'alarm'
-            );
-            continue;
-          }
-          // 从未发过转向命令：超过「进队时刻 + 该分拣机行进时长 + 3s」仍未发命令，视为意外
-          if (!item.cmdSent && item.enqueueTs) {
-            const travelTime = this.sorterTravelTimes[item.machineNo];
-            if (
-              travelTime &&
-              now - item.enqueueTs > travelTime + this.cmdNotSentOverdueMs
-            ) {
-              uploadQueue.trayInfo.splice(i, 1);
-              removed++;
-              this.addLog(
-                `上货队列超时清理：大包 ${item.packageNo}（目标分拣口${
-                  item.allocatedPortNo
-                }，分拣机${item.machineNo}）进队后${
-                  now - item.enqueueTs
-                }ms仍未发送转向命令（应${travelTime}ms到达，已超时${
-                  this.cmdNotSentOverdueMs
-                }ms），已从上货队列删除`,
-                'alarm'
-              );
-            }
-          }
-        }
-        if (removed > 0 && this.selectedQueueIndex === 0) {
-          this.showTrays(0);
-        }
-      }, 500);
-    },
-    // 停止上货队列超时清理轮询
-    stopUploadQueueCleaner() {
-      if (this.uploadQueueCleanTimer) {
-        clearInterval(this.uploadQueueCleanTimer);
-        this.uploadQueueCleanTimer = null;
-      }
-    },
-    // 分拣口PLC计数变化：计数增加时把已发命令的货物从上货队列移入对应分拣口队列
-    handleSortPortCountChange(portNo, newVal, oldVal) {
-      const increment = (Number(newVal) || 0) - (Number(oldVal) || 0);
-      if (increment <= 0) return;
-      const uploadQueue = this.queues[0];
-      const targetQueue = this.queues[portNo]; // queues[1]=分拣口1, ..., queues[12]=分拣口12
-      if (!targetQueue) return;
-      let moved = 0;
-      for (let k = 0; k < increment; k++) {
-        const idx = uploadQueue.trayInfo.findIndex(
-          (item) => item.cmdSent && item.allocatedPortNo === portNo
-        );
-        if (idx === -1) break;
-        const [movedTray] = uploadQueue.trayInfo.splice(idx, 1);
-        targetQueue.trayInfo.push(movedTray);
-        moved++;
-        this.addLog(
-          `分拣口${portNo}PLC计数增加，大包 ${movedTray.packageNo} 已从上货队列移入${targetQueue.queueName}（当前 ${targetQueue.trayInfo.length} 件）`
-        );
-      }
-      if (moved < increment) {
-        this.addLog(
-          `分拣口${portNo}PLC计数增加${increment}，上货队列中仅匹配到${moved}个已发命令的对应货物`,
-          'alarm'
-        );
-      }
-      if (moved) {
-        this.checkAndWriteDBW100();
-        if (
-          this.selectedQueueIndex === 0 ||
-          this.selectedQueueIndex === portNo
-        ) {
-          this.$nextTick(() => {
-            this.showTrays(this.selectedQueueIndex);
-          });
-        }
-      }
-      // 12号异常口：满容量仍走原先 PLC 计数逻辑（满5直接呼叫AGV），不按队列件数触发
-      const portConfig = this.sortPortConfig.find((p) => p.portNo === portNo);
-      if (portConfig && portConfig.sizeType === 'exception') {
-        this.onExceptionPortPlcCount(portNo, Number(newVal) || 0);
-        return;
-      }
-      if (!moved) return;
-      const maxCapacity = this.getPortCapacity(
-        this.getQueuePackageSize(targetQueue)
-      );
-      if (targetQueue.trayInfo.length >= maxCapacity) {
-        this.handleSortPortFull(portNo);
-      }
-    },
-    // ========== AGV/MCS 相关方法 ==========
-    // 手动呼叫AGV：弹出确认后直接呼叫AGV取货（不做计数校验）
-    callAgv(portNo) {
-      this.$confirm('本操作会呼叫AGV取货，并锁定分拣口，是否继续？', '警告', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          this.doCallAgv(portNo);
-        })
-        .catch(() => {
-          this.$message.info('已取消呼叫AGV');
-        });
-    },
-    // 异常口（12）PLC计数变化：达到最大容量且未锁定时，直接呼叫AGV
-    onExceptionPortPlcCount(portNo, plcCount) {
-      const queue = this.queues[portNo];
-      if (!queue || queue.isLock === '1') return;
-      const maxCapacity = this.exceptionPortCapacity;
-      if ((plcCount || 0) < maxCapacity) return;
-      this.handleSortPortFull(portNo);
-    },
-    // 异常口（12）自动补齐队列包裹，使队列数量与PLC计数一致
-    autoFillExceptionPortQueue(portNo, plcCount) {
-      const queue = this.queues[portNo];
-      if (!queue) return;
-      const needCount = (plcCount || 0) - queue.trayInfo.length;
-      if (needCount <= 0) return;
-      const usedNos = new Set(
-        queue.trayInfo.map((t) => (t.packageNo || '').trim())
-      );
-      let seq = 0;
-      const genPackageNo = () => {
-        let no;
-        do {
-          const num = String((Date.now() + seq++) % 100000000).padStart(8, '0');
-          no = `KRRM${num}`;
-        } while (usedNos.has(no));
-        usedNos.add(no);
-        return no;
-      };
-      for (let i = 0; i < needCount; i++) {
-        queue.trayInfo.push({
-          orderInfoId: null,
-          packageNo: genPackageNo(),
-          trayTime: moment().format('YYYY-MM-DD HH:mm:ss'),
-          channel: '',
-          packingWeight: 0,
-          expectedQty: 0,
-          trayStatus: '1',
-          allocatedPortNo: portNo,
-          destinationCode: '',
-          isInQueue: '1'
-        });
-      }
-      this.addLog(
-        `分拣口${portNo}（异常口）队列数量与PLC计数不一致，自动补齐${needCount}个包裹（补齐后${queue.trayInfo.length}件，PLC计数${plcCount}）`
-      );
-      if (this.selectedQueueIndex === portNo) {
-        this.$nextTick(() => {
-          this.showTrays(portNo);
-        });
-      }
-    },
-    // 分拣口队列达到最大容量后，对比PLC计数与队列数量，决定呼叫AGV或锁定报警
-    async handleSortPortFull(portNo) {
-      const queueIndex = portNo; // queues[1]=分拣口1, ..., queues[12]=分拣口12
-      const queue = this.queues[queueIndex];
-      if (!queue) {
-        this.addLog(`分拣口${portNo}满容量判断失败，队列不存在`);
-        return;
-      }
-      // 已锁定的分拣口不重复处理
-      if (queue.isLock === '1') {
-        this.addLog(`分拣口${portNo}已锁定，忽略满容量重复触发`);
-        return;
-      }
-
-      const portConfig = this.sortPortConfig.find((p) => p.portNo === portNo);
-      // 异常口（12）固定容量不区分大小件；通用口按口内包裹大小取统一配置
-      const isExceptionPort = portConfig && portConfig.sizeType === 'exception';
-      const maxCapacity = isExceptionPort
-        ? this.exceptionPortCapacity
-        : this.getPortCapacity(this.getQueuePackageSize(queue));
-      const queueCount = queue.trayInfo.length;
-      const plcCount = this.sortPortPlcCounts[portNo] || 0;
-
-      // 异常口（12）：PLC计数达到最大容量即直接呼叫AGV，不校验队列数量一致；数量不足自动补齐
-      if (isExceptionPort) {
-        if (plcCount < maxCapacity) {
-          this.addLog(
-            `分拣口${portNo}（异常口）PLC计数${plcCount}未达最大容量${maxCapacity}，暂不呼叫AGV`
-          );
-          return;
-        }
-        if (queueCount < plcCount) {
-          this.autoFillExceptionPortQueue(portNo, plcCount);
-        }
-        this.addLog(
-          `分拣口${portNo}（异常口）PLC计数达到${plcCount}，直接呼叫AGV取货`
-        );
-        await this.doCallAgv(portNo);
-        return;
-      }
-
-      this.addLog(
-        `分拣口${portNo}队列已满（${queueCount}/${maxCapacity}），PLC计数：${plcCount}，队列数量：${queueCount}`
-      );
-
-      // 对比PLC分拣口计数与分拣口队列数量
-      if (plcCount !== queueCount) {
-        // 数量不匹配：发送锁定信号 + 报警，不呼叫AGV
-        this.addLog(
-          `分拣口${portNo}数量不匹配！PLC计数=${plcCount}，队列数量=${queueCount}，发送锁定信号，暂停呼叫AGV`,
-          'alarm'
-        );
-        // 锁定队列
-        this.syncAgvStatusToBackend(queue.id, null, '1');
-        // 发送PLC禁止进货命令
-        const forbidBitAdd = `W_DBW102_BIT${queueIndex - 1}`;
-        ipcRenderer.send('writeSingleValueToPLC', forbidBitAdd, true);
-        this.addLog(
-          `已发送PLC禁止进货命令 ${forbidBitAdd}=true（分拣口${portNo}，数量不匹配锁定）`
-        );
-        setTimeout(() => {
-          ipcRenderer.send('cancelWriteToPLC', forbidBitAdd);
-        }, 1000);
-        return;
-      }
-
-      // 数量匹配：呼叫AGV取货
-      this.addLog(`分拣口${portNo}数量匹配，开始呼叫AGV取货`);
-      await this.doCallAgv(portNo);
-    },
-    // 核心AGV呼叫逻辑：调MCS通知AGV取货 + 锁定队列 + 发PLC禁止进货
-    async doCallAgv(portNo) {
-      const queueIndex = portNo;
-      const queue = this.queues[queueIndex];
-      if (!queue) {
-        this.addLog(`分拣口${portNo}呼叫AGV失败，队列不存在`);
-        return;
-      }
-      if (queue.isLock === '1') {
-        this.addLog(`分拣口${portNo}已锁定，忽略重复呼叫AGV`);
-        return;
-      }
-
-      // 1. 调用MCS接口通知AGV取货
-      let mcsSuccess = false;
-      try {
-        // 队列有多少包就生成多少个bindList
-        const bindList = (queue.trayInfo || []).map((tray) => {
-          const pkgNo = tray.packageNo || '';
-          return {
-            materialCategoryCode: 'M1',
-            materialDataCode: pkgNo,
-            attributeList: [
-              { attributeCode: 'trackingNumber', attributeValue: pkgNo },
-              { attributeCode: 'weight', attributeValue: '0' },
-              { attributeCode: 'channel', attributeValue: tray.channel || '' }
-            ]
-          };
-        });
-        const mcsPayload = {
-          // 任务id，生成不重复的时间戳
-          signalId: String(Date.now()),
-          // 触发源类型固定：2-工位
-          signalSourceType: 2,
-          // 信号值（任务类型），固定4
-          signalTriggerValue: 4,
-          // 触发源（下料点点位编号，GW01~GW12的分拣口编号）
-          signalSourceValues: [`GW${String(portNo).padStart(2, '0')}`],
-          // 载具类型，固定T1
-          carrierTypeCode: '1',
-          materialBind: { bindList }
-        };
-        const res = await HttpUtilMcs.post(
-          '/mcs/api/v2/task/receiveSignal',
-          mcsPayload
-        );
-        // 判断接口返回是否真正成功（success为true且code为"0"）
-        if (!res || res.success === false) {
-          const errCode = (res && res.code) || '未知';
-          const errMsg = (res && res.message) || '未知错误';
-          this.addLog(
-            `MCS接口调用失败，分拣口${portNo}，错误码：${errCode}，原因：${errMsg}`,
-            'alarm'
-          );
-        } else {
-          this.addLog(`MCS接口调用成功，分拣口${portNo}，通知AGV取货`);
-          mcsSuccess = true;
-        }
-      } catch (err) {
-        console.error('MCS接口调用失败:', err);
-        this.addLog(
-          `MCS接口调用失败，分拣口${portNo}，原因：${
-            err.message || '网络错误'
-          }`,
-          'alarm'
-        );
-      }
-
-      // 2. 更新队列状态（成功设置0:等待取货，失败设置3:AGV调用失败）
-      if (mcsSuccess) {
-        this.syncAgvStatusToBackend(queue.id, '0', '1');
-      } else {
-        this.syncAgvStatusToBackend(queue.id, '3', '1');
-        this.addLog(
-          `分拣口${portNo} AGV调用失败，队列状态已更新为失败`,
-          'alarm'
-        );
-      }
-
-      // 3. 发送PLC分拣口禁止进货命令 DB1001.DBW102 对应位
-      const forbidBitAdd = `W_DBW102_BIT${queueIndex - 1}`;
-      ipcRenderer.send('writeSingleValueToPLC', forbidBitAdd, true);
-      this.addLog(
-        `已发送PLC禁止进货命令 ${forbidBitAdd}=true（分拣口${portNo}）`
-      );
-      setTimeout(() => {
-        ipcRenderer.send('cancelWriteToPLC', forbidBitAdd);
-      }, 1000);
-    },
-    // 检查系统状态并写入DBW100（分拣口满容量/AGV运输状态信号）
-    // 条件1：所有分拣口都达到最大容量 → 写1
-    // 条件2：所有分拣口队列的状态都是AGV运输状态（trayStatus='0'或'1'） → 写1
-    // 否则 → 写0
-    checkAndWriteDBW100() {
-      // 检查所有分拣口（1~12）是否都达到最大容量
-      const allPortsFull = this.sortPortConfig.every((port) => {
-        const queue = this.queues[port.portNo];
-        if (!queue) return false;
-        const capacity =
-          port.sizeType === 'exception'
-            ? this.exceptionPortCapacity
-            : this.getPortCapacity(this.getQueuePackageSize(queue));
-        return queue.trayInfo.length >= capacity;
-      });
-
-      // 检查所有分拣口队列的状态是否都是AGV运输状态
-      // AGV运输状态：trayStatus='0'（等待AGV取货）或'1'（AGV取货完成）
-      const allQueuesInAgv = this.sortPortConfig.every((port) => {
-        const queue = this.queues[port.portNo];
-        if (!queue) return false;
-        return queue.trayStatus === '0' || queue.trayStatus === '1';
-      });
-
-      const dbw100Value = allPortsFull || allQueuesInAgv ? 1 : 0;
-      ipcRenderer.send('writeValuesToPLC', 'W_DBW100', dbw100Value);
-    },
-    // 启动 MCS/AGV 队列状态轮询
-    startMcsPolling() {
-      if (this.mcsPollingTimer) {
-        clearInterval(this.mcsPollingTimer);
-      }
-      // 立即执行一次，然后每5秒轮询
-      this.pollQueueAgvStatus();
-      this.mcsPollingTimer = setInterval(this.pollQueueAgvStatus, 5000);
-    },
-    // 停止 MCS/AGV 轮询
-    stopMcsPolling() {
-      if (this.mcsPollingTimer) {
-        clearInterval(this.mcsPollingTimer);
-        this.mcsPollingTimer = null;
-      }
-    },
-    // 轮询队列AGV状态（同步数据库状态到前端，防止前端缓存过期覆盖后端）
-    pollQueueAgvStatus() {
-      HttpUtil.post('/queue_info/queryQueueList', {})
-        .then((res) => {
-          if (!res.data || !res.data.length) return;
-          res.data.forEach((queueData) => {
-            const queueId = queueData.id;
-            // 按id查找前端队列（跳过上货队列id=1和数据库残留的已删除队列）
-            const queueIndex = this.queues.findIndex((q) => q.id === queueId);
-            if (queueIndex < 1) return;
-            const queue = this.queues[queueIndex];
-            const dbTrayStatus = queueData.trayStatus || '';
-            const dbIsLock = queueData.isLock || '';
-
-            // 同步数据库状态到前端，防止前端缓存过期被watcher覆盖回后端
-            queue.trayStatus = dbTrayStatus;
-            queue.isLock = dbIsLock;
-
-            // 以数据库状态为准，根据 dbTrayStatus 直接执行对应动作
-            if (dbTrayStatus === '2') {
-              // AGV已送空托盘回来 → 解除PLC禁止进货命令
-              // 前端解锁：直接传值更新后端，成功后同步前端缓存
-              this.syncAgvStatusToBackend(queueId, '', '');
-              this.clearPlcForbidPort(queueIndex);
-              // 清空该分拣口队列数据（AGV已取走货物，空托返回后队列应清空，watcher会自动同步后端）
-              queue.trayInfo = [];
-              // 刷新当前选中队列的显示
-              if (
-                this.selectedQueueIndex === queueIndex ||
-                this.selectedQueueIndex === 0
-              ) {
-                this.$nextTick(() => {
-                  this.showTrays(this.selectedQueueIndex);
-                });
-              }
-              this.addLog(
-                `分拣口${queueIndex} AGV空托盘已返回，解除禁止进货,分拣口${queueIndex} 队列数据已清空`
-              );
-            }
-          });
-          // 数据库状态同步后检查并更新DBW100
-          this.checkAndWriteDBW100();
-        })
-        .catch((err) => {
-          console.error('轮询队列AGV状态失败:', err);
-        });
-    },
-    // 解除PLC某分拣口的禁止进货命令：先发true（1秒），再发false（2秒），最后取消写入
-    clearPlcForbidPort(queueIndex) {
-      const forbidBitAdd = `W_DBW102_BIT${queueIndex - 1}`;
-      // 第一步：发送 true（禁止进货），持续1秒
-      ipcRenderer.send('writeSingleValueToPLC', forbidBitAdd, true);
-      this.addLog(
-        `分拣口${queueIndex}解除禁止进货：${forbidBitAdd}=true（保持1秒）`
-      );
-      // 第二步：1秒后发送 false（允许进货），持续2秒
-      setTimeout(() => {
-        ipcRenderer.send('writeSingleValueToPLC', forbidBitAdd, false);
-        this.addLog(
-          `分拣口${queueIndex}解除禁止进货：${forbidBitAdd}=false（保持2秒）`
-        );
-        // 第三步：再2秒后取消写入
-        setTimeout(() => {
-          ipcRenderer.send('cancelWriteToPLC', forbidBitAdd);
-        }, 5000);
-      }, 1000);
-    },
-    // 全线清空时给PLC发送的命令：所有分拣口先禁止进货2秒，再允许进货2秒，最后取消写入
-    clearAllSortPortsForLineClear() {
-      // 分拣口1-12对应 W_DBW102_BIT0 - W_DBW102_BIT11
-      const portCount = 12;
-      const forbidBitAdds = [];
-      for (let i = 0; i < portCount; i++) {
-        forbidBitAdds.push(`W_DBW102_BIT${i}`);
-      }
-
-      // 第一步：所有分拣口发送 true（禁止进货），持续2秒
-      forbidBitAdds.forEach((add) => {
-        ipcRenderer.send('writeSingleValueToPLC', add, true);
-      });
-
-      // 第二步：2秒后所有分拣口发送 false（允许进货），持续2秒
-      setTimeout(() => {
-        forbidBitAdds.forEach((add) => {
-          ipcRenderer.send('writeSingleValueToPLC', add, false);
-        });
-        this.addLog('全线清空：所有分拣口禁止命令已处理');
-
-        // 第三步：再2秒后取消所有分拣口的PLC写入
-        setTimeout(() => {
-          forbidBitAdds.forEach((add) => {
-            ipcRenderer.send('cancelWriteToPLC', add);
-          });
-          this.addLog('全线清空：已取消所有分拣口PLC写入');
-        }, 2000);
-      }, 1000);
-    },
-    // 根据包裹大小获取分拣口容量（所有口统一：大包取largePortCapacity，小包取smallPortCapacity）
-    getPortCapacity(packageSize) {
-      return packageSize === 'small'
-        ? this.smallPortCapacity
-        : this.largePortCapacity;
-    },
-    // 获取队列中已占用的包裹大小（一口一大小，取第一个带packageSize的包裹）
-    getQueuePackageSize(queue) {
-      const items = (queue && queue.trayInfo) || [];
-      const item = items.find((t) => t.packageSize);
-      return item ? item.packageSize : '';
-    },
-    // 分拣口分配算法（1~11通用口，不区分大小件）
-    // 同渠道且同大小的未满口优先续放；否则按 1→11 顺序循环开新空口
-    // 一口一渠道、一口一大小（大包配大包、小包配小包）
-    allocateSortPort(packageSize, channel) {
-      const channelKey = (channel || '').trim();
-      // 候选口：排除异常口（12），1~11口均可分配任意大小包裹
-      const candidates = this.sortPortConfig.filter(
-        (p) => p.sizeType !== 'exception'
-      );
-      // 按portNo从小到大排序
-      candidates.sort((a, b) => a.portNo - b.portNo);
-
-      // 计算每个分拣口的当前负载、占用渠道与占用大小
-      const portLoads = candidates
-        .map((port) => {
-          const queueId = port.portNo + 1;
-          const portQueue = this.queues.find((q) => q.id === queueId);
-          // 已锁定的分拣口不参与分配（AGV取货中或已锁定）
-          if (portQueue && portQueue.isLock === '1') {
-            return null;
-          }
-          const assignedItems = [];
-          if (portQueue) {
-            assignedItems.push(...portQueue.trayInfo);
-          }
-          // 上货队列中已分配该口的包裹
-          this.queues[0].trayInfo.forEach((item) => {
-            if (item.allocatedPortNo === port.portNo) {
-              assignedItems.push(item);
-            }
-          });
-          const currentLoad = assignedItems.length;
-          const occupiedItem = assignedItems.find(
-            (item) => (item.channel || '').trim() !== ''
-          );
-          const occupiedChannel = occupiedItem
-            ? (occupiedItem.channel || '').trim()
-            : '';
-          // 口内已占用的包裹大小（取第一个带packageSize的包裹）
-          const occupiedSizeItem = assignedItems.find(
-            (item) => item.packageSize
-          );
-          const occupiedSize = occupiedSizeItem
-            ? occupiedSizeItem.packageSize
-            : '';
-          return { port, currentLoad, occupiedChannel, occupiedSize };
-        })
-        .filter(Boolean);
-
-      // 优先级1：已有同渠道且同大小包裹且未满的分拣口（优先续满在用口）
-      // 容量按当前包裹大小取对应配置（大包/小包容量不同）
-      const sameChannelPartial = portLoads.filter(
-        (p) =>
-          p.currentLoad > 0 &&
-          p.currentLoad < this.getPortCapacity(packageSize) &&
-          p.occupiedChannel === channelKey &&
-          p.occupiedSize === packageSize
-      );
-      if (sameChannelPartial.length > 0) {
-        return sameChannelPartial[0].port;
-      }
-
-      // 优先级2：空闲分拣口，按 1→11 顺序循环开新空口（大小包共用游标）
-      const empty = portLoads.filter((p) => p.currentLoad === 0);
-      if (empty.length === 0) {
-        return null;
-      }
-      const portNos = candidates.map((p) => p.portNo);
-      let startIdx = portNos.indexOf(this.lastAllocPortNo);
-      if (startIdx < 0) {
-        startIdx = -1;
-      }
-      for (let i = 1; i <= portNos.length; i++) {
-        const idx = (startIdx + i) % portNos.length;
-        const portNo = portNos[idx];
-        const found = empty.find((e) => e.port.portNo === portNo);
-        if (found) {
-          this.lastAllocPortNo = portNo;
-          return found.port;
-        }
-      }
-      return null;
-    },
-    // 手动模拟分拣机光电上升沿信号（测试用）
-    triggerSorterPhoto(machineNo) {
-      this.addLog(`手动触发分拣机${machineNo}光电上升沿（测试）`);
-      this.handleSorterPhotoTrigger(machineNo);
-    },
-    // 测试：X机剔除信号开关，保持 BIT0
-    toggleXrayRejectSignal() {
-      const next = this.wcsDockWord16.bit0 === '1' ? '0' : '1';
-      this.wcsDockWord16.bit0 = next;
-      this.addLog(
-        `手动切换X机剔除信号（测试）：DBW16.BIT0=${next}（${
-          next === '1' ? '保持开' : '关闭'
-        }）`
-      );
-    },
-    // 测试：模拟 X光电（01013 / DBW16.BIT1）下降沿
-    triggerXrayPhoto() {
-      this.addLog('手动触发X光电下降沿（测试）');
-      this.handleXrayRejectTrigger();
-    },
-    // 手动模拟DBW1252上货触发上升沿（测试用）：置1保持1秒后回0，走真实watcher
-    triggerScanEnqueue() {
-      if (this.uploadTriggerSignal !== 0) {
-        this.$message.warning('上货触发信号已在触发中，请稍候');
-        return;
-      }
-      this.addLog(
-        `手动模拟DBW1252上货触发信号（测试），当前条码：${
-          (this.sixScanBarcode || '').trim() || '--'
-        }`
-      );
-      this.uploadTriggerSignal = 1;
-      if (this._uploadTriggerTestTimer) {
-        clearTimeout(this._uploadTriggerTestTimer);
-      }
-      this._uploadTriggerTestTimer = setTimeout(() => {
-        this.uploadTriggerSignal = 0;
-        this._uploadTriggerTestTimer = null;
-      }, 1000);
+    runSampleTest() {
+      const text = (this.testInput || '').trim() || '空';
+      this.addLog(`测试项：${text}`);
     },
     changeQueueExpanded() {
       this.isQueueExpanded = !this.isQueueExpanded;
@@ -3321,73 +590,6 @@ export default {
     // 显示订单查询对话框
     showOrderQueryDialog() {
       this.orderQueryDialogVisible = true;
-    },
-    toggleDisableCainiao() {
-      const willDisable = !this.disableCainiao;
-      const confirmMsg = willDisable
-        ? '确定要停用菜鸟接口吗？停用后将使用 Mock 数据。'
-        : '确定要重新启用菜鸟接口吗？';
-      this.$confirm(confirmMsg, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          this.disableCainiao = willDisable;
-          const tip = this.disableCainiao
-            ? '已停用菜鸟，包裹信息使用 Mock 数据'
-            : '已启用菜鸟，包裹信息查询菜鸟接口';
-          this.$message.success(tip);
-          this.addLog(tip);
-        })
-        .catch(() => {
-          // 用户取消，不做处理
-        });
-    },
-    // 解析包裹信息：停用菜鸟走 mock，否则查菜鸟大包接口
-    async resolvePackageInfo(barcode) {
-      if (this.disableCainiao) {
-        const packageInfo = mockPackageByBarcode(barcode);
-        this.addLog(
-          `已Mock包裹信息，大包号：${packageInfo.packageNo}，大小：${packageInfo.packageSize}`
-        );
-        return packageInfo;
-      }
-      try {
-        const res = await HttpUtilCainiao.post(
-          '/PreSupervision/getBigPackageToMCS?key=31140fca3b37427491bd3106f765eed2',
-          { bigPackageCode: barcode }
-        );
-        const codeOk =
-          res && (Number(res.code) === 200 || res.success === true);
-        const data = res && res.data;
-        const hasPackage =
-          data && (data.bigPackageCode || data.smallPackageQuantity != null);
-        if (!codeOk || !hasPackage) {
-          const errMsg = (res && res.message) || '查询菜鸟大包信息失败';
-          this.addLog(
-            `菜鸟大包查询失败，条码：${barcode}，原因：${errMsg}`,
-            'alarm'
-          );
-          return null;
-        }
-        const packageInfo = mapCainiaoToPackage(data, barcode);
-        this.addLog(
-          `菜鸟大包查询成功，大包号：${packageInfo.packageNo}，小包数：${
-            packageInfo.expectedQty || '--'
-          }，大小：${packageInfo.packageSize}`
-        );
-        return packageInfo;
-      } catch (error) {
-        console.error('菜鸟大包查询异常:', error);
-        this.addLog(
-          `菜鸟大包查询异常，条码：${barcode}，原因：${
-            error.message || '网络错误'
-          }`,
-          'alarm'
-        );
-        return null;
-      }
     },
     toggleButtonState(button) {
       if (button === 'start') {
@@ -3489,29 +691,10 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            // 所有分拣口发送PLC清空信号：先2秒true（禁止进货），再2秒false（允许进货），最后取消写入
-            this.clearAllSortPortsForLineClear();
-            // 处理锁定的分拣口：解锁后端
-            this.queues.forEach((queue, index) => {
-              if (queue.isLock === '1') {
-                this.addLog(
-                  `全线清空：分拣口${index}已锁定，执行解锁`,
-                  'running'
-                );
-                // 解锁：直接传值更新后端，成功后同步前端缓存
-                this.syncAgvStatusToBackend(queue.id, '', '');
-              }
-            });
             // 把所有的队列、初始状态都清空（复制新数组触发监听器）
             this.queues.forEach((queue) => {
               queue.trayInfo = [];
             });
-            // 全线清空后检查并更新DBW100
-            this.checkAndWriteDBW100();
-            this.nowScanTrayInfo = {};
-            this.sixScanBarcode = '';
-            this.lastProcessedBarcode = '';
-            this.lastAllocPortNo = 0; // 分拣口循环下发游标重置，下次从分拣口1开始
             this.runningLogs = []; // 修改为空数组
             this.alarmLogs = []; // 修改为空数组
             this.nowTrays = [];
@@ -3603,31 +786,30 @@ export default {
           ? selectedQueue.trayInfo
           : [];
 
-        this.nowTrays = trayInfo
-          .map((tray) => {
-            const packageNo = tray.packageNo || tray.trayCode || '';
-            return {
-              id: packageNo,
-              name: packageNo ? `大包 ${packageNo}` : '未知大包',
-              time: tray.trayTime || '',
-              channel: tray.channel || '',
-              packingWeight: tray.packingWeight || '',
-              expectedQty: tray.expectedQty || '',
-              allocatedPortNo: tray.allocatedPortNo || '',
-              destinationCode: tray.destinationCode || ''
-            };
-          })
-          .filter((tray) => tray.id);
+        this.nowTrays = trayInfo.map((tray, trayIndex) => {
+          const packageNo = tray.packageNo || tray.trayCode || '';
+          return {
+            id: packageNo || `item-${trayIndex}`,
+            name: packageNo ? `大包 ${packageNo}` : '未知大包',
+            time: tray.trayTime || '',
+            channel: tray.channel || '',
+            packingWeight: tray.packingWeight || '',
+            expectedQty: tray.expectedQty || '',
+            allocatedPortNo: tray.allocatedPortNo || '',
+            destinationCode: tray.destinationCode || ''
+          };
+        });
       } catch (error) {
         console.error('处理托盘信息时出错:', error);
         this.nowTrays = [];
       }
     },
-    handleDragStart(event, tray, queueIndex) {
-      if (!tray || queueIndex === undefined) return;
+    handleDragStart(event, tray, queueIndex, trayIndex) {
+      if (!tray || queueIndex === undefined || trayIndex === undefined) return;
 
       this.isDragging = true;
       this.draggedTray = tray;
+      this.draggedTrayIndex = trayIndex;
       this.dragSourceQueue = queueIndex;
 
       event.dataTransfer.effectAllowed = 'move';
@@ -3642,15 +824,19 @@ export default {
       event.target.classList.remove('dragging');
     },
     async handleDrop(targetQueueIndex) {
+      const draggedTray = this.draggedTray;
+      const dragSourceQueue = this.dragSourceQueue;
+      const draggedTrayIndex = this.draggedTrayIndex;
       if (
-        !this.draggedTray ||
-        this.dragSourceQueue === null ||
+        !draggedTray ||
+        dragSourceQueue === null ||
+        draggedTrayIndex === null ||
         targetQueueIndex === null
       )
         return;
-      if (this.dragSourceQueue === targetQueueIndex) return;
+      if (dragSourceQueue === targetQueueIndex) return;
 
-      const sourceQueue = this.queues[this.dragSourceQueue];
+      const sourceQueue = this.queues[dragSourceQueue];
       const targetQueue = this.queues[targetQueueIndex];
 
       if (!sourceQueue || !targetQueue) {
@@ -3668,7 +854,7 @@ export default {
       try {
         // 确认移动操作
         await this.$confirm(
-          `确认将托盘 ${this.draggedTray.id} 从 ${sourceQueue.queueName} 移动到 ${targetQueue.queueName}？`,
+          `确认将托盘 ${draggedTray.name} 从 ${sourceQueue.queueName} 移动到 ${targetQueue.queueName}？`,
           '移动托盘确认',
           {
             confirmButtonText: '确定',
@@ -3677,16 +863,14 @@ export default {
           }
         );
 
-        if (!this.draggedTray.id) {
-          throw new Error('托盘信息无效');
-        }
-
-        const trayIndex = sourceQueue.trayInfo.findIndex(
-          (t) => (t.packageNo || t.trayCode) === this.draggedTray.id
-        );
-        if (trayIndex === -1) {
+        if (
+          draggedTrayIndex < 0 ||
+          draggedTrayIndex >= sourceQueue.trayInfo.length
+        ) {
           throw new Error('找不到要移动的托盘');
         }
+
+        const trayIndex = draggedTrayIndex;
 
         const [movedTray] = sourceQueue.trayInfo.splice(trayIndex, 1);
         targetQueue.trayInfo.push(movedTray);
@@ -3698,7 +882,7 @@ export default {
         const currentQueueIndex = this.selectedQueueIndex;
         if (
           currentQueueIndex === targetQueueIndex ||
-          currentQueueIndex === this.dragSourceQueue
+          currentQueueIndex === dragSourceQueue
         ) {
           this.$nextTick(() => {
             this.showTrays(currentQueueIndex);
@@ -3707,20 +891,16 @@ export default {
 
         // 添加托盘移动日志
         this.addLog(
-          `托盘 ${movedTray.packageNo || movedTray.trayCode} 从 ${
-            sourceQueue.queueName
-          } 移动到 ${targetQueue.queueName}`
+          `托盘 ${draggedTray.name} 从 ${sourceQueue.queueName} 移动到 ${targetQueue.queueName}`
         );
 
         this.$message({
           type: 'success',
-          message: `大包 ${
-            movedTray.packageNo || movedTray.trayCode
-          } 已成功移动到 ${targetQueue.queueName}`,
+          message: `${draggedTray.name} 已成功移动到 ${targetQueue.queueName}`,
           duration: 2000
         });
       } catch (error) {
-        if (error === 'cancel') {
+        if (error === 'cancel' || error === 'close') {
           // 用户取消操作
           return;
         }
@@ -3729,6 +909,7 @@ export default {
         this.addLog(`移动大包失败：${error.message || '请重试'}`);
       } finally {
         this.draggedTray = null;
+        this.draggedTrayIndex = null;
         this.dragSourceQueue = null;
         this.isDragging = false;
       }
@@ -3776,13 +957,13 @@ export default {
 
           // 添加删除托盘日志
           this.addLog(
-            `托盘 ${tray.id} 已从 ${this.selectedQueue.queueName} 删除`
+            `托盘 ${tray.name} 已从 ${this.selectedQueue.queueName} 删除`
           );
 
           this.$message.success('托盘删除成功');
         }
       } catch (error) {
-        if (error !== 'cancel') {
+        if (error !== 'cancel' && error !== 'close') {
           this.$message.error('删除托盘失败，请重试');
         }
       }
@@ -3799,10 +980,12 @@ export default {
 
         const currentTray = trayInfo[index];
         const prevTray = trayInfo[index - 1];
+        const currentLabel = this.nowTrays[index]?.name || '';
+        const prevLabel = this.nowTrays[index - 1]?.name || '';
 
         // 确认上移操作
         await this.$confirm(
-          `确认将大包 ${currentTray.id} 上移一位（与 ${prevTray.id} 交换位置）？`,
+          `确认将 ${currentLabel} 上移一位（与 ${prevLabel} 交换位置）？`,
           '上移托盘确认',
           {
             confirmButtonText: '确定',
@@ -3823,12 +1006,12 @@ export default {
 
         // 添加操作日志
         this.addLog(
-          `大包 ${currentTray.id} 在 ${this.selectedQueue.queueName} 中上移`
+          `${currentLabel} 在 ${this.selectedQueue.queueName} 中上移`
         );
 
         this.$message.success('托盘上移成功');
       } catch (error) {
-        if (error === 'cancel') {
+        if (error === 'cancel' || error === 'close') {
           // 用户取消操作
           return;
         }
@@ -3847,10 +1030,12 @@ export default {
 
         const currentTray = trayInfo[index];
         const nextTray = trayInfo[index + 1];
+        const currentLabel = this.nowTrays[index]?.name || '';
+        const nextLabel = this.nowTrays[index + 1]?.name || '';
 
         // 确认下移操作
         await this.$confirm(
-          `确认将大包 ${currentTray.id} 下移一位（与 ${nextTray.id} 交换位置）？`,
+          `确认将 ${currentLabel} 下移一位（与 ${nextLabel} 交换位置）？`,
           '下移托盘确认',
           {
             confirmButtonText: '确定',
@@ -3871,55 +1056,29 @@ export default {
 
         // 添加操作日志
         this.addLog(
-          `大包 ${currentTray.id} 在 ${this.selectedQueue.queueName} 中下移`
+          `${currentLabel} 在 ${this.selectedQueue.queueName} 中下移`
         );
 
         this.$message.success('托盘下移成功');
       } catch (error) {
-        if (error === 'cancel') {
+        if (error === 'cancel' || error === 'close') {
           // 用户取消操作
           return;
         }
         this.$message.error('托盘下移失败，请重试');
       }
     },
-    // 获取队列标记的CSS类
-    getQueueMarkerClass(queueId) {
-      const queue = this.queues.find((q) => q.id === queueId);
-      return {
-        'queue-marker--locked': queue?.isLock === '1',
-        'queue-marker--failed': queue?.trayStatus === '3'
-      };
-    },
     // 点击队列标识
     handleQueueMarkerClick(queueId) {
       // 展开队列面板
       this.isQueueExpanded = true;
-
       // 找到队列在数组中的索引
-      const queueIndex = this.queues.findIndex((q) => q.id === queueId);
+      const queueIndex = this.queues.findIndex((item) => item.id === queueId);
       if (queueIndex !== -1) {
         // 选中并显示对应队列
         this.selectedQueueIndex = queueIndex;
         this.showTrays(queueIndex);
       }
-    },
-    // 点击锁图标解锁队列
-    handleUnlockQueue(queueId) {
-      const queue = this.queues.find((q) => q.id === queueId);
-      if (!queue) return;
-      this.$confirm(`确定要解锁队列「${queue.queueName}」吗？`, '解锁确认', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          // 解锁并清空队列状态
-          this.syncAgvStatusToBackend(queueId, '', '0');
-          this.addLog(`队列「${queue.queueName}」已解锁`, 'running');
-          this.$message.success(`队列「${queue.queueName}」已解锁`);
-        })
-        .catch(() => {});
     },
     // 添加新的日志方法
     addLog(message, type = 'running') {
@@ -3952,8 +1111,7 @@ export default {
       }
       // 同时写入本地文件
       const logTypeText = type === 'running' ? '运行日志' : '报警日志';
-      const logMessage = `[${logTypeText}] ${message}`;
-      ipcRenderer.send('writeLogToLocal', logMessage);
+      ipcRenderer.send('writeLogToLocal', `[${logTypeText}] ${message}`);
     },
     toggleBitValue(obj, bit) {
       obj[bit] = obj[bit] === '1' ? '0' : '1';
@@ -3961,43 +1119,19 @@ export default {
     convertToWord(value) {
       if (value < 0) {
         return (value & 0xffff) >>> 0; // 负数转换为无符号的16位整数
-      } else {
-        return value; // 非负数保持不变
       }
+      return value; // 非负数保持不变
     },
-    // 更新数据库队列信息（仅同步trayInfo，AGV状态字段由syncAgvStatusToBackend单独控制）
     // 更新数据库队列信息
     updateQueueInfo(id) {
-      const queue = this.queues.find((q) => q.id === id);
+      const queue = this.queues.find((item) => item.id === id);
       if (!queue) return;
-      const param = {
-        id: id,
+      HttpUtil.post('/queue_info/update', {
+        id,
         trayInfo: JSON.stringify(queue.trayInfo)
-      };
-      HttpUtil.post('/queue_info/update', param).catch((err) => {
+      }).catch((err) => {
         this.$message.error(err);
       });
-    },
-    // 同步AGV状态字段到后端，后端更新成功后再同步前端缓存
-    // 与updateQueueInfo分离，避免Vue watcher将前端缓存的旧状态覆盖后端AGV回调写入的新状态
-    // 未传入的字段（null/undefined）不会更新，避免覆盖后端已有值
-    syncAgvStatusToBackend(queueId, trayStatus, isLock) {
-      const param = { id: queueId };
-      if (trayStatus != null) param.trayStatus = trayStatus;
-      if (isLock != null) param.isLock = isLock;
-      HttpUtil.post('/queue_info/update', param)
-        .then(() => {
-          // 后端更新成功后同步前端缓存（只更新传入的字段）
-          const queue = this.queues.find((q) => q.id === queueId);
-          if (!queue) return;
-          if (trayStatus != null) queue.trayStatus = trayStatus;
-          if (isLock != null) queue.isLock = isLock;
-          // AGV状态变化后检查并更新DBW100
-          this.checkAndWriteDBW100();
-        })
-        .catch((err) => {
-          console.error('同步AGV状态到后端失败:', err);
-        });
     },
     // 从数据库加载队列信息
     loadQueueInfoFromDatabase() {
@@ -4006,10 +1140,10 @@ export default {
           if (res.data && res.data.length > 0) {
             // 遍历数据库返回的队列信息
             res.data.forEach((queueData) => {
-              const queueId = queueData.id;
               // 按id查找前端队列（数据库残留的已删除队列id匹配不到即跳过）
-              const queueIndex = this.queues.findIndex((q) => q.id === queueId);
-
+              const queueIndex = this.queues.findIndex(
+                (item) => item.id === queueData.id
+              );
               // 确保队列索引有效
               if (queueIndex >= 0 && queueIndex < this.queues.length) {
                 try {
@@ -4021,21 +1155,22 @@ export default {
                   this.queues[queueIndex].trayInfo = Array.isArray(trayInfo)
                     ? trayInfo
                     : [];
-                  // 加载AGV状态字段
-                  if (queueIndex >= 1) {
-                    this.queues[queueIndex].trayStatus =
-                      queueData.trayStatus || '';
-                    this.queues[queueIndex].isLock = queueData.isLock || '';
-                  }
                   this.addLog(
-                    `已加载队列${queueData.queueName || queueId}的托盘信息，共${
+                    `已加载队列${
+                      queueData.queueName || queueData.id
+                    }的托盘信息，共${
                       this.queues[queueIndex].trayInfo.length
                     }个托盘`
                   );
                 } catch (error) {
-                  console.error(`解析队列${queueId}的托盘信息失败:`, error);
+                  console.error(
+                    `解析队列${queueData.id}的托盘信息失败:`,
+                    error
+                  );
                   this.queues[queueIndex].trayInfo = [];
-                  this.addLog(`队列${queueId}托盘信息解析失败，已重置为空`);
+                  this.addLog(
+                    `队列${queueData.id}托盘信息解析失败，已重置为空`
+                  );
                 }
               }
             });
@@ -4050,9 +1185,13 @@ export default {
           this.addLog('队列信息加载失败');
         })
         .finally(() => {
-          this._queueInitDone = true;
-          // 队列数据加载完成后检查并更新DBW100
-          this.checkAndWriteDBW100();
+          // 等本次赋值触发的监听先跑完，再允许写回，避免加载时把队列又提交一次
+          this.$nextTick(() => {
+            this._queueInitDone = true;
+            if (this.isQueueExpanded && this.selectedQueueIndex !== -1) {
+              this.showTrays(this.selectedQueueIndex);
+            }
+          });
         });
     },
     // 切换到报警日志时清除未读状态
@@ -4065,6 +1204,10 @@ export default {
     }
   },
   beforeUnmount() {
+    if (this._dataReadyTimer) {
+      clearTimeout(this._dataReadyTimer);
+      this._dataReadyTimer = null;
+    }
     window.removeEventListener('resize', this.updateMarkerPositions);
     // 清理PLC数据接收监听器，防止重复注册和内存泄漏
     if (this.receivedMsgHandler) {
@@ -4079,21 +1222,6 @@ export default {
         }
       });
       this._queueWatchers = [];
-    }
-    // 清除 MCS/AGV 轮询定时器
-    this.stopMcsPolling();
-    // 清除上货队列超时清理轮询
-    this.stopUploadQueueCleaner();
-    // 断开六面扫Socket连接
-    this.disconnectSixScan();
-    // 清除上货触发模拟测试定时器
-    if (this._uploadTriggerTestTimer) {
-      clearTimeout(this._uploadTriggerTestTimer);
-      this._uploadTriggerTestTimer = null;
-    }
-    if (this._onReFlushConfig) {
-      EventBus.$off('reFlushConfig', this._onReFlushConfig);
-      this._onReFlushConfig = null;
     }
   }
 };

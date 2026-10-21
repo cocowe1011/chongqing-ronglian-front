@@ -562,7 +562,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="marker-with-panel" data-x="920" data-y="330">
+                <div class="marker-with-panel" data-x="920" data-y="300">
                   <div
                     class="data-panel"
                     :class="['position-top', { 'always-show': true }]"

@@ -370,7 +370,7 @@ app.on('ready', () => {
       const jarPath = path.join(
         __static,
         './jarlib',
-        'chongqing-ronglian-record-middle.jar'
+        'chongqing-ronglian-middle.jar'
       );
 
       // 优化的Java启动参数 - 针对启动速度优化

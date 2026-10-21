@@ -3,7 +3,7 @@
     <!-- 内容区包装器 -->
     <div class="content-wrapper">
       <!-- 左侧面板 -->
-      <div class="side-info-panel" v-show="false">
+      <div class="side-info-panel">
         <!-- PLC状态与订单信息区域 -->
         <div class="plc-info-section">
           <div class="section-header">示例信息</div>
@@ -88,6 +88,13 @@
             </button>
             <button @click="toggleButtonState('clear')">
               <el-icon><Delete /></el-icon><span>全线清空</span>
+            </button>
+            <button
+              class="btn-manual"
+              :class="{ pressed: manualDrawerVisible }"
+              @click="toggleManualPanel"
+            >
+              <el-icon><Pointer /></el-icon><span>手动操作</span>
             </button>
           </div>
         </div>
@@ -725,6 +732,115 @@
       </div>
     </div>
 
+    <!-- 手动操作面板：自写浮层，位置见 MANUAL_PANEL_INIT，标题栏可拖动 -->
+    <div
+      ref="manualPanel"
+      class="manual-control-drawer"
+      :class="{ open: manualDrawerVisible }"
+      :style="{ left: manualPanelPos.x + 'px', top: manualPanelPos.y + 'px' }"
+    >
+      <div class="manual-panel-header" @mousedown="startManualPanelDrag">
+        <span class="manual-panel-title">
+          <el-icon><Operation /></el-icon>
+          手动操作面板
+        </span>
+        <el-icon class="manual-panel-close" @click="closeManualPanel"
+          ><Close />
+        </el-icon>
+      </div>
+      <div class="manual-panel-body">
+        <!-- 手自动模式切换 DB1001.DBW30 -->
+        <div class="manual-row">
+          <div class="manual-row-label">运行模式</div>
+          <button
+            type="button"
+            class="manual-mode-btn"
+            :class="manualMode === 1 ? 'is-auto' : 'is-manual'"
+            @click="toggleManualMode"
+          >
+            <span class="manual-mode-track"><i></i></span>
+            <span>{{ manualMode === 1 ? '自动模式' : '手动模式' }}</span>
+          </button>
+        </div>
+
+        <!-- 手动执行电机编号 DB1001.DBW24/26/28 -->
+        <div class="manual-row manual-row--top">
+          <div class="manual-row-label">执行电机</div>
+          <div class="manual-motor-list">
+            <el-select
+              v-for="(slot, index) in manualMotorSlots"
+              :key="'motor-slot-' + index"
+              v-model="slot.value"
+              :placeholder="`电机${index + 1}`"
+              :disabled="manualMode !== 0"
+              @change="handleManualMotorChange(index, $event)"
+            >
+              <el-option :value="0" label="未选择" />
+              <el-option
+                v-for="no in 15"
+                :key="no"
+                :value="1000 + no"
+                :label="10000 + no + '电机'"
+              />
+            </el-select>
+          </div>
+        </div>
+
+        <!-- 手动启动 DBW32；点动 DBW34/36/38 按1松0 -->
+        <div class="manual-action-grid">
+          <button
+            type="button"
+            class="manual-action manual-action--start"
+            :class="{ active: manualStartOn }"
+            :disabled="manualMode !== 0"
+            @click="toggleManualStart"
+          >
+            <el-icon><VideoPlay /></el-icon>
+            <span>{{ manualStartOn ? '启动中' : '手动启动' }}</span>
+          </button>
+          <button
+            type="button"
+            class="manual-action manual-action--stop"
+            :class="{ active: manualJogStates.stop }"
+            :disabled="manualMode !== 0"
+            @mousedown="jogPress('stop')"
+            @mouseup="jogRelease('stop')"
+            @mouseleave="jogRelease('stop')"
+          >
+            <el-icon><VideoPause /></el-icon>
+            <span>停止</span>
+          </button>
+          <button
+            type="button"
+            class="manual-action"
+            :class="{ active: manualJogStates.up }"
+            :disabled="manualMode !== 0"
+            @mousedown="jogPress('up')"
+            @mouseup="jogRelease('up')"
+            @mouseleave="jogRelease('up')"
+          >
+            <el-icon><Top /></el-icon>
+            <span>上升</span>
+          </button>
+          <button
+            type="button"
+            class="manual-action"
+            :class="{ active: manualJogStates.down }"
+            :disabled="manualMode !== 0"
+            @mousedown="jogPress('down')"
+            @mouseup="jogRelease('down')"
+            @mouseleave="jogRelease('down')"
+          >
+            <el-icon><Bottom /></el-icon>
+            <span>下降</span>
+          </button>
+        </div>
+        <div class="manual-tip">
+          手动启动点击切换；停止、上升、下降需按住，松开即复位
+        </div>
+      </div>
+    </div>
+
     <!-- 订单查询对话框 -->
     <OrderQueryDialog v-model:visible="orderQueryDialogVisible" />
   </div>
@@ -734,6 +850,14 @@
 import HttpUtil from '@/utils/HttpUtil';
 import { ipcRenderer } from 'electron';
 import OrderQueryDialog from '@/components/OrderQueryDialog.vue';
+
+// 手动点动点位地址（按1松0）与名称
+const MANUAL_JOG_ADDRS = { stop: 'W_DBW34', up: 'W_DBW36', down: 'W_DBW38' };
+const MANUAL_JOG_NAMES = { stop: '停止', up: '上升', down: '下降' };
+// 手动执行电机编号点位地址（未选择写0，电机1001-1015）
+const MANUAL_MOTOR_ADDRS = ['W_DBW24', 'W_DBW26', 'W_DBW28'];
+// 手动操作面板初始位置：right 距窗口右边缘，top 距窗口上边缘，单位像素
+const MANUAL_PANEL_INIT = { right: 50, top: 180 };
 
 export default {
   name: 'MainPage',
@@ -752,6 +876,17 @@ export default {
       testInput: '',
       showTestPanel: false,
       orderQueryDialogVisible: false,
+      // 手动操作面板
+      manualDrawerVisible: false,
+      manualPanelPos: { x: 0, y: 0 },
+      // 手自动模式（DB1001.DBW30：手动0、自动1），默认手动
+      manualMode: 0,
+      // 手动启动保持状态（DB1001.DBW32）
+      manualStartOn: false,
+      // 手动执行电机编号1/2/3（DB1001.DBW24/26/28，0为未选择）
+      manualMotorSlots: [{ value: 0 }, { value: 0 }, { value: 0 }],
+      // 点动按钮按下状态
+      manualJogStates: { up: false, down: false, stop: false },
       buttonStates: {
         start: false,
         stop: false,
@@ -925,6 +1060,7 @@ export default {
     }
   },
   mounted() {
+    this.$nextTick(() => this.placeManualPanel());
     this.initializeMarkers();
     this.loadQueueInfoFromDatabase();
     // 数据加载完成后创建监听（上货区、A工位、B工位）
@@ -1046,6 +1182,158 @@ export default {
     // 显示订单查询对话框
     showOrderQueryDialog() {
       this.orderQueryDialogVisible = true;
+    },
+    // 脉冲写：先下发值，2秒后取消该点位写入（从写入数组移除）。
+    // 点动（按1松0）走 writeStrArr 保持写，其余命令不常驻写入数组，
+    // 避免 WCS 启动时用初值覆盖 PLC 侧已有指令
+    pulseWriteToPLC(addr, value) {
+      if (!this._plcPulseTimers) this._plcPulseTimers = {};
+      if (this._plcPulseTimers[addr]) {
+        clearTimeout(this._plcPulseTimers[addr]);
+      }
+      ipcRenderer.send('writeSingleValueToPLC', addr, value);
+      this._plcPulseTimers[addr] = setTimeout(() => {
+        ipcRenderer.send('cancelWriteToPLC', addr);
+        this._plcPulseTimers[addr] = null;
+      }, 2000);
+    },
+    // 左侧操作区入口：开关手动操作面板
+    toggleManualPanel() {
+      this.manualDrawerVisible = !this.manualDrawerVisible;
+      if (!this.manualDrawerVisible) this.releaseManualJogs();
+    },
+    closeManualPanel() {
+      this.manualDrawerVisible = false;
+      this.releaseManualJogs();
+    },
+    // 按 MANUAL_PANEL_INIT 的 right、top 放初始位置
+    placeManualPanel() {
+      const el = this.$refs.manualPanel;
+      const w = el ? el.offsetWidth : 460;
+      this.manualPanelPos = this.clampManualPanelPos(
+        window.innerWidth - w - MANUAL_PANEL_INIT.right,
+        MANUAL_PANEL_INIT.top
+      );
+    },
+    clampManualPanelPos(x, y) {
+      const el = this.$refs.manualPanel;
+      const w = el ? el.offsetWidth : 460;
+      return {
+        x: Math.max(0, Math.min(x, window.innerWidth - w)),
+        y: Math.max(0, Math.min(y, window.innerHeight - 48))
+      };
+    },
+    startManualPanelDrag(event) {
+      if (event.button !== 0) return;
+      if (event.target.closest('.manual-panel-close')) return;
+      this._panelDrag = {
+        dx: event.clientX - this.manualPanelPos.x,
+        dy: event.clientY - this.manualPanelPos.y
+      };
+      document.addEventListener('mousemove', this.onManualPanelDrag);
+      document.addEventListener('mouseup', this.stopManualPanelDrag);
+    },
+    onManualPanelDrag(event) {
+      if (!this._panelDrag) return;
+      this.manualPanelPos = this.clampManualPanelPos(
+        event.clientX - this._panelDrag.dx,
+        event.clientY - this._panelDrag.dy
+      );
+    },
+    stopManualPanelDrag() {
+      this._panelDrag = null;
+      document.removeEventListener('mousemove', this.onManualPanelDrag);
+      document.removeEventListener('mouseup', this.stopManualPanelDrag);
+    },
+    // 手自动模式切换（DB1001.DBW30：手动0、自动1，单按钮两状态）
+    toggleManualMode() {
+      const next = this.manualMode === 0 ? 1 : 0;
+      const toManual = next === 0;
+      this.$confirm(
+        toManual
+          ? '切换到手动模式后产线将由人工控制，确认切换？'
+          : '切换到自动模式后将恢复自动运行，确认切换？',
+        '模式切换',
+        {
+          confirmButtonText: '确认切换',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => this.applyManualMode(next))
+        .catch(() => {});
+    },
+    applyManualMode(mode) {
+      this.manualMode = mode;
+      this.pulseWriteToPLC('W_DBW30', mode);
+      this.addLog(
+        `手动操作：切换为${mode === 0 ? '手动' : '自动'}模式（DBW30=${mode}）`
+      );
+      // 切回自动时清掉手动启动与点动，避免残留输出
+      if (mode === 1) {
+        if (this.manualStartOn) {
+          this.manualStartOn = false;
+          this.pulseWriteToPLC('W_DBW32', 0);
+          this.addLog('手动操作：手动启动停止（DBW32=0）');
+        }
+        this.releaseManualJogs();
+      }
+    },
+    // 手动启动/停止（DB1001.DBW32：1启动，再次按下写0）
+    toggleManualStart() {
+      if (this.manualMode !== 0) return;
+      const next = !this.manualStartOn;
+      this.$confirm(
+        next ? '确定要手动启动吗？' : '确定要停止手动启动吗？',
+        '手动启动',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      )
+        .then(() => {
+          this.manualStartOn = next;
+          this.pulseWriteToPLC('W_DBW32', next ? 1 : 0);
+          this.addLog(
+            `手动操作：手动启动${next ? '置位' : '停止'}（DBW32=${
+              next ? 1 : 0
+            }）`
+          );
+        })
+        .catch(() => {});
+    },
+    // 手动执行电机编号下发（未选择写0，电机1001-1015）
+    handleManualMotorChange(index, value) {
+      const addr = MANUAL_MOTOR_ADDRS[index];
+      this.pulseWriteToPLC(addr, value);
+      this.addLog(
+        `手动操作：电机编号${index + 1}设为${
+          value === 0 ? '未选择' : value + 9000 + '电机'
+        }（${addr}=${value}）`
+      );
+    },
+    // 点动按下：下发1（writeStrArr 保持写）
+    jogPress(action) {
+      if (this.manualMode !== 0 || this.manualJogStates[action]) return;
+      this.manualJogStates[action] = true;
+      ipcRenderer.send('writeValuesToPLC', MANUAL_JOG_ADDRS[action], 1);
+      this.addLog(
+        `手动操作：${MANUAL_JOG_NAMES[action]}按下（${MANUAL_JOG_ADDRS[action]}=1）`
+      );
+    },
+    // 点动松开：下发0（writeStrArr 保持写）
+    jogRelease(action) {
+      if (!this.manualJogStates[action]) return;
+      this.manualJogStates[action] = false;
+      ipcRenderer.send('writeValuesToPLC', MANUAL_JOG_ADDRS[action], 0);
+      this.addLog(
+        `手动操作：${MANUAL_JOG_NAMES[action]}松开（${MANUAL_JOG_ADDRS[action]}=0）`
+      );
+    },
+    // 松开全部点动按钮（面板关闭/退出页面时兜底）
+    releaseManualJogs() {
+      ['up', 'down', 'stop'].forEach((action) => this.jogRelease(action));
     },
     toggleButtonState(button) {
       if (button === 'start') {
@@ -1665,6 +1953,14 @@ export default {
       this._dataReadyTimer = null;
     }
     window.removeEventListener('resize', this.updateMarkerPositions);
+    // 退出页面时松开手动点动，避免PLC侧残留1
+    this.releaseManualJogs();
+    this.stopManualPanelDrag();
+    // 清理脉冲写定时器，避免退出后继续下发/取消写入
+    Object.values(this._plcPulseTimers || {}).forEach((timer) => {
+      if (timer) clearTimeout(timer);
+    });
+    this._plcPulseTimers = {};
     // 清理PLC数据接收监听器，防止重复注册和内存泄漏
     if (this.receivedMsgHandler) {
       ipcRenderer.removeListener('receivedMsg', this.receivedMsgHandler);
@@ -4111,5 +4407,220 @@ export default {
   100% {
     transform: translateX(0px) translateZ(0);
   }
+}
+
+/* 手动操作面板：自写浮层，left/top 由脚本控制，标题栏可拖动 */
+.manual-control-drawer {
+  position: fixed;
+  z-index: 1500;
+  width: 460px;
+  max-height: 72vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--mp-surface-muted);
+  border: 1px solid var(--mp-module-border);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(31, 60, 136, 0.2);
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  user-select: none;
+
+  &.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .manual-panel-header {
+    cursor: move;
+    height: var(--mp-module-header-height);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 13px;
+    color: #fff;
+    font-size: var(--mp-module-header-font-size);
+    font-weight: 700;
+    background: linear-gradient(
+      135deg,
+      var(--mp-module-header-start) 0%,
+      var(--mp-module-header-mid) 55%,
+      var(--mp-module-header-end) 100%
+    );
+    .manual-panel-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .manual-panel-close {
+      font-size: 18px;
+      cursor: pointer;
+      transition: color 0.2s ease;
+      &:hover {
+        color: #ffd666;
+      }
+    }
+  }
+
+  .manual-panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 18px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: #fff;
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(67, 133, 255, 0.28);
+      border-radius: 2px;
+    }
+  }
+}
+
+.manual-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px dashed var(--mp-border);
+
+  &--top {
+    align-items: flex-start;
+    .manual-row-label {
+      line-height: 32px;
+    }
+  }
+  .manual-row-label {
+    flex-shrink: 0;
+    width: 60px;
+    font-size: 13px;
+    color: var(--mp-text-muted);
+  }
+}
+
+.manual-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 32px;
+  padding: 0 14px 0 6px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  .manual-mode-track {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    border-radius: 10px;
+    background: currentColor;
+    i {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      transition: left 0.2s ease;
+    }
+  }
+  &.is-manual {
+    color: #d48806;
+    background: #fff8e6;
+    border: 1px solid #ffd77a;
+  }
+  &.is-auto {
+    color: #1e9e5a;
+    background: #ebf8f1;
+    border: 1px solid #9bdcb8;
+    .manual-mode-track i {
+      left: 18px;
+    }
+  }
+}
+
+.manual-motor-list {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.manual-action-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.manual-action {
+  --action-color: var(--mp-accent);
+  --action-bg: var(--mp-accent-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 76px;
+  font-size: 13px;
+  color: var(--action-color);
+  background: #fff;
+  border: 1px solid var(--mp-border);
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(47, 84, 235, 0.06);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
+
+  .el-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    border-radius: 50%;
+    background: var(--action-bg);
+  }
+  &:hover:not(:disabled) {
+    border-color: var(--action-color);
+  }
+  &.active {
+    color: #fff;
+    background: var(--action-color);
+    border-color: var(--action-color);
+    transform: translateY(1px);
+    box-shadow: none;
+    .el-icon {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  &--start {
+    --action-color: #1e9e5a;
+    --action-bg: #ebf8f1;
+  }
+  &--stop {
+    --action-color: #e5534b;
+    --action-bg: #fdeeed;
+  }
+}
+
+.manual-tip {
+  font-size: 12px;
+  color: var(--mp-text-secondary);
+  text-align: center;
+}
+
+/* 左侧操作区手动操作按钮：面板展开时琥珀色高亮 */
+.operation-buttons button.btn-manual.pressed {
+  background: linear-gradient(135deg, #faad14, #d48806);
 }
 </style>

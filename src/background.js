@@ -624,12 +624,18 @@ var variables = {
   W_DBW54: 'DB1001,INT54' // B工位呼叫空托盘
 };
 
-var writeStrArr = [0, 0, 0, 0];
+// 仅心跳、全线控制与点动（按1松0）保持写；
+// 其余手动命令由渲染进程 writeSingleValueToPLC 脉冲下发、2秒后 cancelWriteToPLC 取消，
+// 避免 WCS 启动时用初值覆盖 PLC 侧已有指令
+var writeStrArr = [0, 0, 0, 0, 0, 0, 0];
 var writeAddArr = [
   'W_DBW0', // WCS看门狗心跳
   'W_DBW2', // WCS-全线启动
   'W_DBW4', // WCS-全线停止
-  'W_DBW6' // WCS-故障复位
+  'W_DBW6', // WCS-故障复位
+  'W_DBW34', // 停止（按1松0）
+  'W_DBW36', // 上升（按1松0）
+  'W_DBW38' // 下降（按1松0）
 ];
 
 // 给PLC写值

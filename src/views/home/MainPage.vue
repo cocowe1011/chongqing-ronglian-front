@@ -6,13 +6,13 @@
       <div class="side-info-panel">
         <!-- PLC状态与订单信息区域 -->
         <div class="plc-info-section">
-          <div class="section-header">示例信息</div>
+          <div class="section-header">上货信息</div>
           <div class="scrollable-content">
             <div class="status-overview">
               <div class="data-card">
                 <div class="data-card-border">
                   <div class="data-card-border-borderTop granient-text">
-                    示例字段一
+                    订单编号
                   </div>
                   <div class="data-card-border-borderDown">
                     {{ sampleInfo.field1 || '--' }}
@@ -21,7 +21,7 @@
               </div>
               <div class="data-card">
                 <div class="data-card-border">
-                  <div class="data-card-border-borderTop">示例字段二</div>
+                  <div class="data-card-border-borderTop">货物名称</div>
                   <div class="data-card-border-borderDown">
                     {{ sampleInfo.field2 || '--' }}
                   </div>
@@ -29,7 +29,7 @@
               </div>
               <div class="data-card">
                 <div class="data-card-border">
-                  <div class="data-card-border-borderTop">示例字段三</div>
+                  <div class="data-card-border-borderTop">货物编码</div>
                   <div class="data-card-border-borderDown">
                     {{ sampleInfo.field3 || '--' }}
                   </div>
@@ -37,7 +37,7 @@
               </div>
               <div class="data-card">
                 <div class="data-card-border">
-                  <div class="data-card-border-borderTop">示例字段四</div>
+                  <div class="data-card-border-borderTop">重量</div>
                   <div class="data-card-border-borderDown">
                     {{ sampleInfo.field4 || '--' }}
                   </div>
@@ -528,16 +528,50 @@
                   ></div>
                 </div>
                 <!-- 输送线数据看板：上货队列与分拣口 -->
-                <div class="marker-with-panel" data-x="1150" data-y="1200">
+                <div class="marker-with-panel" data-x="720" data-y="1320">
                   <div
                     class="data-panel"
                     :class="['position-top', { 'always-show': true }]"
                     style="width: 210px"
                   >
-                    <div class="data-panel-header">数据看板</div>
+                    <div class="data-panel-header">10009扫码数据</div>
                     <div class="data-panel-content">
                       <div class="data-panel-row">
-                        <span class="data-panel-label">示例数值：</span>
+                        <span class="data-panel-label">扫码结果：</span>
+                        <span class="barcode-value">{{
+                          sampleValue || '--'
+                        }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="marker-with-panel" data-x="920" data-y="1130">
+                  <div
+                    class="data-panel"
+                    :class="['position-top', { 'always-show': true }]"
+                    style="width: 210px"
+                  >
+                    <div class="data-panel-header">A工位扫码数据</div>
+                    <div class="data-panel-content">
+                      <div class="data-panel-row">
+                        <span class="data-panel-label">扫码结果：</span>
+                        <span class="barcode-value">{{
+                          sampleValue || '--'
+                        }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="marker-with-panel" data-x="920" data-y="330">
+                  <div
+                    class="data-panel"
+                    :class="['position-top', { 'always-show': true }]"
+                    style="width: 210px"
+                  >
+                    <div class="data-panel-header">B工位扫码数据</div>
+                    <div class="data-panel-content">
+                      <div class="data-panel-row">
+                        <span class="data-panel-label">扫码结果：</span>
                         <span class="barcode-value">{{
                           sampleValue || '--'
                         }}</span>

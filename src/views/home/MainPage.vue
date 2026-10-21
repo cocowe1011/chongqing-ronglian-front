@@ -3,7 +3,7 @@
     <!-- 内容区包装器 -->
     <div class="content-wrapper">
       <!-- 左侧面板 -->
-      <div class="side-info-panel">
+      <div class="side-info-panel" v-show="false">
         <!-- PLC状态与订单信息区域 -->
         <div class="plc-info-section">
           <div class="section-header">示例信息</div>
@@ -203,80 +203,80 @@
                 <!-- DBW6 对接输入信号 -->
                 <!-- 10001光电 -->
                 <div
-                  class="marker"
+                  class="marker label-top"
                   :class="{ scanning: photoelectricSignal.bit0 === '1' }"
-                  data-x="640"
-                  data-y="1380"
+                  data-x="1480"
+                  data-y="1360"
                   @click="toggleBitValue(photoelectricSignal, 'bit0')"
                 >
                   <div class="marker-label">10001光电</div>
                 </div>
                 <!-- 10002光电 -->
                 <div
-                  class="marker"
+                  class="marker label-top"
                   :class="{ scanning: photoelectricSignal.bit1 === '1' }"
-                  data-x="640"
-                  data-y="1380"
+                  data-x="1160"
+                  data-y="1360"
                   @click="toggleBitValue(photoelectricSignal, 'bit1')"
                 >
                   <div class="marker-label">10002光电</div>
                 </div>
                 <!-- 10003光电 -->
                 <div
-                  class="marker"
+                  class="marker label-top"
                   :class="{ scanning: photoelectricSignal.bit2 === '1' }"
-                  data-x="640"
-                  data-y="1380"
+                  data-x="440"
+                  data-y="1360"
                   @click="toggleBitValue(photoelectricSignal, 'bit2')"
                 >
                   <div class="marker-label">10003光电</div>
                 </div>
                 <!-- 10004光电 -->
                 <div
-                  class="marker"
+                  class="marker label-right"
                   :class="{ scanning: photoelectricSignal.bit3 === '1' }"
-                  data-x="640"
-                  data-y="1380"
+                  data-x="360"
+                  data-y="1360"
                   @click="toggleBitValue(photoelectricSignal, 'bit3')"
                 >
                   <div class="marker-label">10004光电</div>
                 </div>
                 <!-- 10006升到位 -->
                 <div
-                  class="marker"
+                  class="marker lift-arrow lift-arrow--up"
                   :class="{ scanning: photoelectricSignal.bit4 === '1' }"
-                  data-x="640"
-                  data-y="1380"
+                  data-x="40"
+                  data-y="1580"
                   @click="toggleBitValue(photoelectricSignal, 'bit4')"
                 >
                   <div class="marker-label">10006升到位</div>
                 </div>
                 <!-- 10006降到位 -->
                 <div
-                  class="marker"
+                  class="marker lift-arrow lift-arrow--down"
                   :class="{ scanning: photoelectricSignal.bit5 === '1' }"
-                  data-x="640"
-                  data-y="1380"
+                  data-x="80"
+                  data-y="1580"
                   @click="toggleBitValue(photoelectricSignal, 'bit5')"
                 >
                   <div class="marker-label">10006降到位</div>
                 </div>
                 <!-- 10007光电 -->
                 <div
-                  class="marker"
+                  class="marker label-right"
                   :class="{ scanning: photoelectricSignal.bit6 === '1' }"
-                  data-x="640"
-                  data-y="1380"
+                  data-x="360"
+                  data-y="1290"
                   @click="toggleBitValue(photoelectricSignal, 'bit6')"
                 >
                   <div class="marker-label">10007光电</div>
                 </div>
                 <!-- 10008光电 -->
                 <div
-                  class="marker"
+                  class="marker label-right"
                   :class="{ scanning: photoelectricSignal.bit7 === '1' }"
-                  data-x="640"
-                  data-y="1380"
+                  data-x="360"
+                  data-y="1020"
                   @click="toggleBitValue(photoelectricSignal, 'bit7')"
                 >
                   <div class="marker-label">10008光电</div>
@@ -285,38 +285,38 @@
                 <div
                   class="marker"
                   :class="{ scanning: photoelectricSignal.bit8 === '1' }"
-                  data-x="640"
-                  data-y="1380"
+                  data-x="360"
+                  data-y="740"
                   @click="toggleBitValue(photoelectricSignal, 'bit8')"
                 >
                   <div class="marker-label">10009光电</div>
                 </div>
                 <!-- 10010光电 -->
                 <div
-                  class="marker"
+                  class="marker label-right"
                   :class="{ scanning: photoelectricSignal.bit9 === '1' }"
-                  data-x="640"
-                  data-y="1380"
+                  data-x="360"
+                  data-y="470"
                   @click="toggleBitValue(photoelectricSignal, 'bit9')"
                 >
                   <div class="marker-label">10010光电</div>
                 </div>
                 <!-- 10012上升到位 -->
                 <div
-                  class="marker"
+                  class="marker lift-arrow lift-arrow--up label-right"
                   :class="{ scanning: photoelectricSignal.bit10 === '1' }"
-                  data-x="640"
-                  data-y="1380"
+                  data-x="40"
+                  data-y="660"
                   @click="toggleBitValue(photoelectricSignal, 'bit10')"
                 >
                   <div class="marker-label">10012上升到位</div>
                 </div>
                 <!-- 10012下降到位 -->
                 <div
-                  class="marker"
+                  class="marker lift-arrow lift-arrow--down label-right"
                   :class="{ scanning: photoelectricSignal.bit11 === '1' }"
-                  data-x="640"
-                  data-y="1380"
+                  data-x="80"
+                  data-y="660"
                   @click="toggleBitValue(photoelectricSignal, 'bit11')"
                 >
                   <div class="marker-label">10012下降到位</div>
@@ -325,8 +325,8 @@
                 <div
                   class="marker"
                   :class="{ scanning: photoelectricSignal.bit12 === '1' }"
-                  data-x="640"
-                  data-y="1380"
+                  data-x="410"
+                  data-y="700"
                   @click="toggleBitValue(photoelectricSignal, 'bit12')"
                 >
                   <div class="marker-label">10013光电</div>
@@ -335,18 +335,18 @@
                 <div
                   class="marker"
                   :class="{ scanning: photoelectricSignal.bit13 === '1' }"
-                  data-x="640"
-                  data-y="1380"
+                  data-x="630"
+                  data-y="700"
                   @click="toggleBitValue(photoelectricSignal, 'bit13')"
                 >
                   <div class="marker-label">10014光电</div>
                 </div>
                 <!-- 10015光电 -->
                 <div
-                  class="marker"
+                  class="marker label-right"
                   :class="{ scanning: photoelectricSignal.bit14 === '1' }"
-                  data-x="640"
-                  data-y="1380"
+                  data-x="360"
+                  data-y="410"
                   @click="toggleBitValue(photoelectricSignal, 'bit14')"
                 >
                   <div class="marker-label">10015光电</div>
@@ -356,8 +356,8 @@
                 <div
                   class="motor-marker marker-show-label"
                   :class="{ running: motorRunning.bit0 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
+                  data-x="1480"
+                  data-y="1490"
                   @click="toggleBitValue(motorRunning, 'bit0')"
                 >
                   <div class="marker-label">10001电机</div>
@@ -366,8 +366,8 @@
                 <div
                   class="motor-marker marker-show-label"
                   :class="{ running: motorRunning.bit1 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
+                  data-x="1160"
+                  data-y="1490"
                   @click="toggleBitValue(motorRunning, 'bit1')"
                 >
                   <div class="marker-label">10002电机</div>
@@ -376,108 +376,108 @@
                 <div
                   class="motor-marker marker-show-label"
                   :class="{ running: motorRunning.bit2 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
+                  data-x="440"
+                  data-y="1490"
                   @click="toggleBitValue(motorRunning, 'bit2')"
                 >
                   <div class="marker-label">10003电机</div>
                 </div>
                 <!-- 10004电机运行信号 -->
                 <div
-                  class="motor-marker marker-show-label"
+                  class="motor-marker marker-show-label label-left"
                   :class="{ running: motorRunning.bit3 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
+                  data-x="230"
+                  data-y="1490"
                   @click="toggleBitValue(motorRunning, 'bit3')"
                 >
                   <div class="marker-label">10004电机</div>
                 </div>
                 <!-- 10005电机运行信号 -->
-                <div
-                  class="motor-marker marker-show-label"
+                <!-- <div
+                  class="motor-marker marker-show-label label-left"
                   :class="{ running: motorRunning.bit4 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
+                  data-x="230"
+                  data-y="1495"
                   @click="toggleBitValue(motorRunning, 'bit4')"
                 >
                   <div class="marker-label">10005电机</div>
-                </div>
+                </div> -->
                 <!-- 10006电机运行信号 -->
-                <div
-                  class="motor-marker marker-show-label"
+                <!-- <div
+                  class="motor-marker marker-show-label label-left"
                   :class="{ running: motorRunning.bit5 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
+                  data-x="230"
+                  data-y="1560"
                   @click="toggleBitValue(motorRunning, 'bit5')"
                 >
                   <div class="marker-label">10006电机</div>
-                </div>
+                </div> -->
                 <!-- 10007电机运行信号 -->
                 <div
-                  class="motor-marker marker-show-label"
+                  class="motor-marker marker-show-label label-left"
                   :class="{ running: motorRunning.bit6 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
+                  data-x="230"
+                  data-y="1290"
                   @click="toggleBitValue(motorRunning, 'bit6')"
                 >
                   <div class="marker-label">10007电机</div>
                 </div>
                 <!-- 10008电机运行信号 -->
                 <div
-                  class="motor-marker marker-show-label"
+                  class="motor-marker marker-show-label label-left"
                   :class="{ running: motorRunning.bit7 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
+                  data-x="230"
+                  data-y="1020"
                   @click="toggleBitValue(motorRunning, 'bit7')"
                 >
                   <div class="marker-label">10008电机</div>
                 </div>
                 <!-- 10009电机运行信号 -->
                 <div
-                  class="motor-marker marker-show-label"
+                  class="motor-marker marker-show-label label-left"
                   :class="{ running: motorRunning.bit8 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
+                  data-x="230"
+                  data-y="740"
                   @click="toggleBitValue(motorRunning, 'bit8')"
                 >
                   <div class="marker-label">10009电机</div>
                 </div>
                 <!-- 10010电机运行信号 -->
                 <div
-                  class="motor-marker marker-show-label"
+                  class="motor-marker marker-show-label label-left"
                   :class="{ running: motorRunning.bit9 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
+                  data-x="230"
+                  data-y="590"
                   @click="toggleBitValue(motorRunning, 'bit9')"
                 >
                   <div class="marker-label">10010电机</div>
                 </div>
                 <!-- 10011电机运行信号 -->
-                <div
-                  class="motor-marker marker-show-label"
+                <!-- <div
+                  class="motor-marker marker-show-label label-left"
                   :class="{ running: motorRunning.bit10 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
+                  data-x="230"
+                  data-y="590"
                   @click="toggleBitValue(motorRunning, 'bit10')"
                 >
                   <div class="marker-label">10011电机</div>
-                </div>
+                </div> -->
                 <!-- 10012电机运行信号 -->
-                <div
-                  class="motor-marker marker-show-label"
+                <!-- <div
+                  class="motor-marker marker-show-label label-left"
                   :class="{ running: motorRunning.bit11 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
+                  data-x="230"
+                  data-y="660"
                   @click="toggleBitValue(motorRunning, 'bit11')"
                 >
                   <div class="marker-label">10012电机</div>
-                </div>
+                </div> -->
                 <!-- 10013电机运行信号 -->
                 <div
                   class="motor-marker marker-show-label"
                   :class="{ running: motorRunning.bit12 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
+                  data-x="410"
+                  data-y="590"
                   @click="toggleBitValue(motorRunning, 'bit12')"
                 >
                   <div class="marker-label">10013电机</div>
@@ -486,18 +486,18 @@
                 <div
                   class="motor-marker marker-show-label"
                   :class="{ running: motorRunning.bit13 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
+                  data-x="630"
+                  data-y="590"
                   @click="toggleBitValue(motorRunning, 'bit13')"
                 >
                   <div class="marker-label">10014电机</div>
                 </div>
                 <!-- 10015电机运行信号 -->
                 <div
-                  class="motor-marker marker-show-label"
+                  class="motor-marker marker-show-label label-left"
                   :class="{ running: motorRunning.bit14 === '1' }"
-                  data-x="1080"
-                  data-y="1390"
+                  data-x="230"
+                  data-y="410"
                   @click="toggleBitValue(motorRunning, 'bit14')"
                 >
                   <div class="marker-label">10015电机</div>
@@ -2294,6 +2294,45 @@ export default {
               /* 扫描状态 (红色) */
               .marker.scanning::before {
                 background: rgba(255, 0, 0, 0.8); /* 红色核心 */
+              }
+              /* 升降到位箭头指示灯：未触发灰色，升到位黄色，降到位蓝色 */
+              .marker.lift-arrow {
+                width: 16px;
+                height: 24px;
+              }
+              .marker.lift-arrow::before {
+                border-radius: 0;
+                background: rgba(128, 128, 128, 0.55);
+              }
+              .marker.lift-arrow--up::before {
+                clip-path: polygon(
+                  50% 0%,
+                  100% 40%,
+                  70% 40%,
+                  70% 100%,
+                  30% 100%,
+                  30% 40%,
+                  0% 40%
+                );
+              }
+              .marker.lift-arrow--down::before {
+                clip-path: polygon(
+                  30% 0%,
+                  70% 0%,
+                  70% 60%,
+                  100% 60%,
+                  50% 100%,
+                  0% 60%,
+                  30% 60%
+                );
+              }
+              .marker.lift-arrow--up.scanning::before {
+                background: #ffd000;
+                filter: drop-shadow(0 0 3px rgba(255, 208, 0, 0.95));
+              }
+              .marker.lift-arrow--down.scanning::before {
+                background: #2f80ff;
+                filter: drop-shadow(0 0 3px rgba(47, 128, 255, 0.95));
               }
 
               /* 默认隐藏标签，hover时显示 */

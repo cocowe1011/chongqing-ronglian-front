@@ -497,6 +497,10 @@ function conPLC() {
           conn.addItems('DBW14'); // A工位码垛完成呼叫AGV出垛
           conn.addItems('DBW16'); // B工位码垛完成呼叫AGV出垛
           conn.addItems('DBW18'); // 机器人抓取成功
+          conn.addItems('DBW20'); // 10009任务号 DB1000.DBW20
+          conn.addItems('DBW22'); // 10012任务号 DB1000.DBW22
+          conn.addItems('DBW24'); // 10013任务号 DB1000.DBW24
+          conn.addItems('DBW26'); // 10014任务号 DB1000.DBW26
           conn.addItems('DBB30'); // 码垛位扫码信息 DB1000.DBB30-49
           conn.addItems('DBB50'); // A工位空托盘码信息 DB1000.DBB50-69
           conn.addItems('DBB70'); // B工位空托盘码信息 DB1000.DBB70-89
@@ -582,6 +586,10 @@ var variables = {
   DBW14: 'DB1000,INT14', // A工位码垛完成呼叫AGV出垛
   DBW16: 'DB1000,INT16', // B工位码垛完成呼叫AGV出垛
   DBW18: 'DB1000,INT18', // 机器人抓取成功
+  DBW20: 'DB1000,INT20', // 10009任务号（10000-30000）
+  DBW22: 'DB1000,INT22', // 10012任务号
+  DBW24: 'DB1000,INT24', // 10013任务号
+  DBW26: 'DB1000,INT26', // 10014任务号
   DBB30: 'DB1000,C30.20', // 码垛位扫码信息 DBB30-49
   DBB50: 'DB1000,C50.20', // A工位空托盘码信息 DBB50-69
   DBB70: 'DB1000,C70.20', // B工位空托盘码信息 DBB70-89
@@ -603,9 +611,17 @@ var variables = {
   W_DBW28: 'DB1001,INT28', // 手动执行电机编号3
   W_DBW30: 'DB1001,INT30', // 手自动模式切换
   W_DBW32: 'DB1001,INT32', // 手动启动
-  W_DBW34: 'DB1001,INT34', // 按1松0
+  W_DBW34: 'DB1001,INT34', // 停止（按1松0）
   W_DBW36: 'DB1001,INT36', // 上升
-  W_DBW38: 'DB1001,INT38' // 下降
+  W_DBW38: 'DB1001,INT38', // 下降
+  W_DBW40: 'DB1001,INT40', // 有无半托
+  W_DBW42: 'DB1001,INT42', // 机械手确认数量报警
+  W_DBW44: 'DB1001,INT44', // PDA修改绑定托盘信息成功
+  W_DBW46: 'DB1001,INT46', // 剔除或者进码垛队列
+  W_DBW48: 'DB1001,INT48', // 下发任务号
+  W_DBW50: 'DB1001,INT50', // 下发10009允许出货
+  W_DBW52: 'DB1001,INT52', // A工位呼叫空托盘
+  W_DBW54: 'DB1001,INT54' // B工位呼叫空托盘
 };
 
 var writeStrArr = [0, 0, 0, 0];

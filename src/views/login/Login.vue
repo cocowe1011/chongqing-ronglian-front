@@ -18,9 +18,9 @@
         </div>
       </div>
       <div class="login-right-down">
-        <p class="title">智能分拣系统</p>
+        <p class="title">智能码垛系统</p>
         <p class="intro">
-          欢迎使用智能分拣系统。简洁、易用的操作页面，全自动化管理全力帮助您提高效率。
+          欢迎使用智能码垛系统。简洁、易用的操作页面，全自动化管理全力帮助您提高效率。
         </p>
         <div class="login-form">
           <el-input

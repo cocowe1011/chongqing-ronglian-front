@@ -191,7 +191,8 @@ export default {
       const items = [
         { index: '1', label: '首页', icon: 'HomeFilled' },
         { index: '2', label: '业务', icon: 'Operation' },
-        { index: '4', label: '配置', icon: 'Tools' },
+        // 配置页暂时隐藏
+        // { index: '4', label: '配置', icon: 'Tools' },
         {
           index: '3',
           label: '用户',

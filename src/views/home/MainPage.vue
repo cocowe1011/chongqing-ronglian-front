@@ -2786,8 +2786,8 @@ export default {
                 z-index: 2;
                 .data-panel {
                   position: absolute;
-                  background: linear-gradient(135deg, #0e1a27, #3c4c63);
-                  border: 1px solid rgba(64, 158, 255, 0.3);
+                  background: linear-gradient(135deg, #1a3d82, #2c569e);
+                  border: 1px solid rgba(67, 133, 255, 0.48);
                   border-radius: 8px;
                   padding: 12px;
                   width: 170px;
@@ -2797,10 +2797,10 @@ export default {
                   pointer-events: none;
                   .data-panel-header {
                     font-size: 14px;
-                    color: #409eff;
+                    color: #ffffff;
                     margin-bottom: 6px;
                     padding-bottom: 6px;
-                    border-bottom: 1px solid rgba(64, 158, 255, 0.2);
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.22);
                   }
                   .data-panel-content {
                     font-size: 12px;
@@ -2815,9 +2815,9 @@ export default {
                       display: flex;
                       justify-content: space-between;
                       align-items: center;
-                      color: rgba(255, 255, 255, 0.9);
+                      color: #ffffff;
                       .data-panel-label {
-                        color: rgba(255, 255, 255, 0.6);
+                        color: rgba(255, 255, 255, 0.88);
                         font-size: 12px;
                         white-space: nowrap;
                         flex-shrink: 0;
@@ -3216,10 +3216,10 @@ export default {
                 transform: translate(-50%, -50%);
                 cursor: pointer;
                 z-index: 10;
-                background: rgba(10, 30, 50, 0.85);
+                background: linear-gradient(135deg, #1a3d82, #2c569e);
                 padding: 4px 8px;
                 border-radius: 4px;
-                border: 1px solid rgba(64, 158, 255, 0.5);
+                border: 1px solid rgba(67, 133, 255, 0.55);
                 transition: all 0.3s ease;
                 min-width: 40px;
                 text-align: center;
@@ -3240,7 +3240,7 @@ export default {
                     align-items: baseline;
                     font-size: 14px;
                     font-weight: bold;
-                    color: #409eff;
+                    color: #ffffff;
 
                     .queue-marker-count__plc {
                       color: #e6a23c;
@@ -3249,8 +3249,8 @@ export default {
                 }
               }
               .queue-marker:hover {
-                background: rgba(24, 61, 97, 0.9);
-                border-color: rgba(64, 158, 255, 0.6);
+                background: linear-gradient(135deg, #224888, #3360aa);
+                border-color: rgba(67, 133, 255, 0.72);
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
               }
 
